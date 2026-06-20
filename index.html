@@ -1,47 +1,28 @@
-<!doctype html>
-<html lang="id">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex, nofollow">
-  <title>Janus — Dashboard Plan DR</title>
-  <style>
-    :root { --hijau:#6aa121; }
-    * { box-sizing:border-box; }
-    body { font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif; margin:0;
-           background:#f5f6f4; color:#1f2421; }
-    header { background:var(--hijau); color:#fff; padding:18px 20px; }
-    header h1 { margin:0; font-size:19px; }
-    header p { margin:4px 0 0; font-size:12px; opacity:.9; }
-    .wrap { max-width:900px; margin:0 auto; padding:22px 16px; }
-    .card { background:#fff; border:1px solid #e2e5e0; border-radius:10px;
-            padding:18px 20px; margin-bottom:14px; }
-    .badge { display:inline-block; background:#eef5e6; color:var(--hijau);
-             border:1px solid #cfe3b8; padding:2px 10px; border-radius:20px; font-size:12px; }
-    .muted { color:#7a807a; font-size:13px; }
-    code { background:#eef0ec; padding:1px 6px; border-radius:5px; font-size:12px; }
-    footer { text-align:center; color:#9aa19a; font-size:11px; padding:18px; }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>🌱 Janus — Dashboard Plan Kegiatan DR</h1>
-    <p>Read-only · output otomatis dari sistem Janus</p>
-  </header>
-  <div class="wrap">
-    <div class="card">
-      <span class="badge">UJI INFRA</span>
-      <h2 style="margin:10px 0 6px">Pipeline aktif ✅</h2>
-      <p class="muted">Halaman ini bukti jalur publikasi jalan: <b>ROG generate → push → GitHub Pages</b>.
-      Belum ada data asli — konten plan per-DR menyusul setelah infra di-ACC.</p>
-    </div>
-    <div class="card">
-      <h3 style="margin:0 0 8px">Berikutnya (fase konten)</h3>
-      <p class="muted">Tabel availability & plan per DR (DR · tanggal · jenis · kecamatan),
-      di-refresh otomatis dari <code>demand_projects</code>. Field bisnis sensitif TIDAK ditampilkan.</p>
-    </div>
+<!doctype html><html lang="id"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow"><title>Janus — Dashboard Plan DR</title>
+<style>
+:root{--hijau:#6aa121}*{box-sizing:border-box}
+body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#f5f6f4;color:#1f2421}
+header{background:var(--hijau);color:#fff;padding:18px 20px}header h1{margin:0;font-size:19px}
+header p{margin:4px 0 0;font-size:12px;opacity:.9}
+.wrap{max-width:900px;margin:0 auto;padding:22px 16px}
+.card{background:#fff;border:1px solid #e2e5e0;border-radius:10px;padding:18px 20px;margin-bottom:14px}
+.row{display:flex;gap:14px;flex-wrap:wrap}
+.stat{flex:1;min-width:130px;text-align:center;background:#fff;border:1px solid #e2e5e0;border-radius:10px;padding:16px}
+.stat b{display:block;font-size:30px;color:var(--hijau)}.stat span{font-size:12px;color:#7a807a}
+.badge{display:inline-block;background:#eef5e6;color:var(--hijau);border:1px solid #cfe3b8;padding:2px 10px;border-radius:20px;font-size:12px}
+.muted{color:#7a807a;font-size:13px}footer{text-align:center;color:#9aa19a;font-size:11px;padding:18px}
+</style></head><body>
+<header><h1>🌱 Janus — Dashboard Plan Kegiatan DR</h1><p>Read-only · output otomatis dari sistem Janus (ROG)</p></header>
+<div class="wrap">
+  <div class="card"><span class="badge">UJI INFRA — jalur data AMAN</span>
+    <p class="muted" style="margin:10px 0 0">Stat di bawah ditarik live dari <b>demand_projects</b> (cuma JUMLAH — nol field sensitif). Tabel plan per-DR menyusul di fase konten.</p></div>
+  <div class="row">
+    <div class="stat"><b>8</b><span>DR ada kegiatan</span></div>
+    <div class="stat"><b>44</b><span>kegiatan terjadwal</span></div>
+    <div class="stat"><b>53</b><span>total kegiatan</span></div>
   </div>
-  <footer>Janus DR Dashboard · uji infra · <span id="ts"></span></footer>
-  <script>document.getElementById('ts').textContent = 'dibuat ' + new Date().toISOString().slice(0,16).replace('T',' ');</script>
-</body>
-</html>
+</div>
+<footer>Janus DR Dashboard · uji infra · update 2026-06-20 08:14 WIB</footer>
+</body></html>
