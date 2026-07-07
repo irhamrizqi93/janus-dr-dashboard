@@ -10,11 +10,12 @@
    target sentuh >=44px · motion transform/opacity saja. */
 :root{
   --navy:#10384F;--green:#9AD04B;--blue:#50B9F5;--ablue:#0078C8;
-  --canvas:#F4F6F8;--rail:#ECF0F3;--surface:#FFFFFF;
-  --line:rgba(16,56,79,.10);--line-strong:rgba(16,56,79,.16);
-  --ink:#1F2421;--ink-2:#46504B;--ink-3:#6B726A;--ink-4:#98A09A;
-  --sh-card:0 1px 2px rgba(16,56,79,.06),0 2px 8px rgba(16,56,79,.05);
+  --canvas:#F6F8F9;--rail:#F1F4F6;--surface:#FFFFFF;
+  --line:rgba(16,56,79,.10);--line-strong:rgba(16,56,79,.16);--hair:rgba(16,56,79,.08);
+  --ink:#10384F;--ink-2:#3E5B6D;--ink-3:#6E8494;--ink-4:#93A5B1;
+  --sh-card:0 1px 1px rgba(16,56,79,.14),0 0 1px rgba(16,56,79,.22);
   --sh-pop:0 -4px 24px rgba(16,56,79,.16);
+  --late:#c2273d;--today-c:#5e8f2f;
   --hijau:#10384F;--muted-c:var(--ink-3);
 }
 *{box-sizing:border-box}
@@ -73,14 +74,14 @@ header p{margin:5px 0 0;font-size:12px;color:rgba(255,255,255,.72);font-weight:4
 .kctop{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;gap:8px}
 .kctop .muted{font-family:"IBM Plex Mono",monospace;font-size:11px;font-variant-numeric:tabular-nums;
   color:var(--ink-3);white-space:nowrap}
-.kcn{font-size:15px;font-weight:600;letter-spacing:-.15px;margin:1px 0 2px;color:var(--ink)}
+.kcn{font-size:15px;font-weight:500;letter-spacing:-.1px;margin:1px 0 2px;color:var(--ink);display:flex;align-items:center;gap:7px}
 .kmeta{font-size:12px;color:var(--ink-3);line-height:1.45}
 .kempty{padding:22px 10px;text-align:center;color:var(--ink-4);font-size:12.5px}
 
 /* chip jenis: label uppercase accent-blue, radius nested (kartu 10 - pad ~ 6) */
 .exjt{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
-  background:rgba(0,120,200,.09);color:var(--ablue);padding:3px 8px;border-radius:6px;
-  min-width:44px;text-align:center;flex:none}
+  background:transparent;color:var(--ink-3);border:1px solid var(--line);padding:2px 8px;
+  border-radius:5px;min-width:44px;text-align:center;flex:none}
 
 /* ── Bottom sheet: slide-up (transform/opacity saja), grab handle, target 48px ── */
 .sheet{position:fixed;inset:0;background:rgba(16,36,49,.48);display:flex;z-index:60;
@@ -192,18 +193,60 @@ details.jd summary{font-size:13px;color:var(--ink-2)}
   font-size:9px;font-weight:700;padding:0 6px;border-radius:6px;vertical-align:middle;cursor:help}
 .muted{color:var(--ink-3);font-size:12px}
 footer{text-align:center;color:var(--ink-4);font-size:11px;padding:20px 16px}
+/* ── ring status (warna = ikon kecil, bukan blok) ── */
+.ring{width:14px;height:14px;flex:none;border-radius:50%;border:1.5px solid var(--ink-4);display:inline-block;position:relative}
+.ring.half{border-color:#c98a1e;background:linear-gradient(90deg,#e8b055 50%,transparent 50%)}
+.ring.full{border-color:#2e7d32;background:#2e7d32}
+.ring.full:after{content:"✓";position:absolute;inset:0;color:#fff;font-size:9px;line-height:12px;text-align:center;font-weight:700}
+.ring.x{border-color:var(--late)}
+.ring.x:after{content:"✕";position:absolute;inset:0;color:var(--late);font-size:9px;line-height:12px;text-align:center;font-weight:700}
+/* ── AGENDA (landing): list per-hari ala Things Upcoming ── */
+.ag-g{margin:0 0 30px}
+.ag-h{display:flex;align-items:baseline;gap:8px;padding-bottom:8px;border-bottom:1px solid var(--hair);margin-bottom:2px}
+.ag-h .d{font-size:21px;font-weight:600;letter-spacing:-.4px;color:var(--ink);font-variant-numeric:tabular-nums}
+.ag-h .w{font-size:12px;color:var(--ink-3)}
+.ag-h .n{margin-left:auto;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-4)}
+.ag-h.late .d,.ag-h.late .w{color:var(--late)}
+.ag-h.today .d{color:var(--today-c)}
+.arow{display:flex;align-items:center;gap:11px;padding:12px 2px;min-height:48px;cursor:pointer;border-radius:8px}
+.arow:active{background:rgba(0,120,200,.07)}
+.arow .am{flex:1;min-width:0}
+.arow .at{font-size:15px;font-weight:400;color:var(--ink);line-height:1.35;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.arow .at b{font-weight:500}
+.arow .al{font-size:12px;color:var(--ink-3);margin-top:1px}
+.arow .ad{margin-left:auto;font-family:"IBM Plex Mono",monospace;font-size:12px;font-variant-numeric:tabular-nums;color:var(--ink-3);white-space:nowrap;flex:none}
+.arow .ad.late{color:var(--late);font-weight:600}
+.ag-empty{display:grid;place-items:center;padding:52px 16px;text-align:center}
+.ag-empty .big{font-size:64px;opacity:.07;line-height:1}
+.ag-empty p{color:var(--ink-4);font-size:13px;margin:10px 0 0}
+/* ── kolom kanban terlipat (hitungan menggantikan kartu) ── */
+.kcol.clp .kcards{display:none}
+.kcol .kh{cursor:pointer;user-select:none}
+.kcol.clp{flex:0 0 auto;max-width:none;min-width:120px}
+/* ── FAB: satu aksi (ajukan kegiatan) ── */
+.fab{position:fixed;right:16px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:50;width:52px;height:52px;
+  border-radius:50%;border:0;background:var(--green);color:var(--navy);font-size:26px;font-weight:600;cursor:pointer;
+  box-shadow:0 2px 8px rgba(16,56,79,.25);display:flex;align-items:center;justify-content:center;transition:transform .12s}
+.fab:active{transform:scale(.92)}
+@media(min-width:760px){.fab{bottom:24px}}
+.panel.on ~ .fab{display:flex}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style></head><body>
 <header><h1>📋 Papan Plan Kegiatan DR</h1><p>Tap kartu Rencana → <b>Rubah Tanggal</b> / <b>Rubah Lokasi</b> → langsung tersimpan · status Selesai/Settle diurus TM</p></header>
 <nav class="tabs">
-  <button class="tab on" data-t="papan" onclick="tb('papan')"><span class="ti">📋</span><span>Papan</span></button>
+  <button class="tab on" data-t="agenda" onclick="tb('agenda')"><span class="ti">🗓️</span><span>Agenda</span></button>
+  <button class="tab" data-t="papan" onclick="tb('papan')"><span class="ti">📋</span><span>Papan</span></button>
   <button class="tab" data-t="kal" onclick="tb('kal')"><span class="ti">📅</span><span>Kalender</span></button>
   <button class="tab" data-t="dr" onclick="tb('dr')"><span class="ti">👥</span><span>DR</span></button>
   <button class="tab" data-t="info" onclick="tb('info')"><span class="ti">🎯</span><span>Info</span></button>
 </nav>
 <div class="wrap">
 
-<div class="panel on" id="p-papan">
+<div class="panel on" id="p-agenda">
+  <div id="agwrap"></div>
+</div>
+
+<div class="panel" id="p-papan">
   <div class="banner" style="margin-top:10px">⏳ <b>0</b> kegiatan/demo <b>belum ada tanggal</b> — cek tab 👥 DR, segera tentukan biar masuk papan.</div>
   
 <div class="exctl">
@@ -219,7 +262,6 @@ footer{text-align:center;color:var(--ink-4);font-size:11px;padding:20px 16px}
   <div class="kcol" data-col="settled"><div class="kh kh-settle">✓ Settled <span class="kn" id="kn-settled"></span></div><div class="kcards" id="kc-settled"></div></div>
   <div class="kcol" data-col="batal"><div class="kh kh-batal">⛔ Batal <span class="kn" id="kn-batal"></span></div><div class="kcards" id="kc-batal"></div></div>
 </div>
-<button class="shbtn go" style="max-width:340px;margin:4px auto 0;display:block" onclick="shNew()">➕ Ajukan kegiatan baru</button>
 <div class="sheet" id="sheet" onclick="if(event.target===this)shClose()">
   <div class="shbox"><div class="grab"></div><div id="shtitle" class="shtitle"></div><div id="shsub" class="muted"></div>
     <div id="shbtns"></div>
@@ -251,7 +293,7 @@ function kbCard(x,i){
   var dc={'Beni':'#2e7d32','Resa':'#1565c0','Safii':'#c62828'}[x.dsr]||'rgba(16,56,79,.16)';
   return '<div class="kcard" style="--dsr:'+dc+'" data-i="'+i+'" onclick="shOpen('+i+')">'+
     '<div class="kctop"><span class="exjt">'+x.jenis+'</span><span class="muted">'+(x.tgl||'TBD')+'</span></div>'+
-    '<div class="kcn"><b>'+x.dmr+'</b>'+badge+'</div>'+
+    '<div class="kcn">'+ringOf(x)+'<b>'+x.dmr+'</b>'+badge+'</div>'+
     '<div class="kmeta">'+x.kec+(x.desa?' · '+x.desa:'')+(x.crop?' · '+x.crop:'')+'</div>'+note+'</div>';
 }
 function kbF(){
@@ -362,7 +404,51 @@ function shOpen(i){
 }
 function shClose(){document.getElementById('sheet').classList.remove('on');}
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},3500);}
-kbF();
+function ringOf(x){
+  var c=x.col==='exec'?'half':(x.col==='settled'?'full':(x.col==='batal'?'x':''));
+  return '<span class="ring '+c+'"></span>';
+}
+// kolom selain Rencana default TERLIPAT (hitungan menggantikan kartu — pola field-app)
+document.querySelectorAll('.kcol').forEach(function(c){
+  if(c.dataset.col!=='plan')c.classList.add('clp');
+  c.querySelector('.kh').addEventListener('click',function(){c.classList.toggle('clp');});
+});
+var TODAY="2026-07-07";
+var HARI=['Min','Sen','Sel','Rab','Kam','Jum','Sab'],BLN=['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+function agRow(x,i){
+  var late=x.col==='plan'&&x.tgl&&x.tgl<TODAY;
+  return '<div class="arow" onclick="shOpen('+i+')">'+ringOf(x)+
+    '<div class="am"><div class="at"><span class="exjt">'+x.jenis+'</span><b>'+x.dmr+'</b></div>'+
+    '<div class="al">'+x.kec+(x.desa?' · '+x.desa:'')+(x.crop?' · '+x.crop:'')+'</div></div>'+
+    '<span class="ad'+(late?' late':'')+'">'+(x.tgl?x.tgl.slice(5):'—')+'</span></div>';
+}
+function agB(){
+  var byDay={},late=[],nodate=[];
+  KB.forEach(function(x,i){
+    if(x.jenis==='DEMO'||x.col==='settled'||x.col==='batal')return;
+    if(x.col==='exec'&&x.tgl&&x.tgl<TODAY)return;
+    if(!x.tgl){if(x.col==='plan')nodate.push(i);return;}
+    if(x.col==='plan'&&x.tgl<TODAY){late.push(i);return;}
+    (byDay[x.tgl]=byDay[x.tgl]||[]).push(i);
+  });
+  var h='';
+  function grp(cls,big,small,idx){
+    if(!idx.length)return;
+    h+='<div class="ag-g"><div class="ag-h '+cls+'"><span class="d">'+big+'</span><span class="w">'+small+
+       '</span><span class="n">'+idx.length+'</span></div>'+idx.map(function(i){return agRow(KB[i],i);}).join('')+'</div>';
+  }
+  grp('late','Terlambat','belum dieksekusi, tanggal lewat',late);
+  Object.keys(byDay).sort().forEach(function(t){
+    var d=new Date(t+'T00:00:00'),cls=t===TODAY?'today':'';
+    var big=t===TODAY?'Hari Ini':String(+t.slice(8,10));
+    var small=HARI[d.getDay()]+', '+(+t.slice(8,10))+' '+BLN[+t.slice(5,7)];
+    grp(cls,big,small,byDay[t]);
+  });
+  grp('','Tanpa tanggal','segera tentukan',nodate);
+  document.getElementById('agwrap').innerHTML=h||
+    '<div class="ag-empty"><div class="big">🗓️</div><p>Tidak ada kegiatan terjadwal.<br>Tap ➕ untuk mengajukan kegiatan baru.</p></div>';
+}
+kbF();agB();
 </script>
   <div class="stleg">Status: <span class="stb st-plan" title="Terjadwal, belum eksekusi.">⏳ Plan</span> <span class="stb st-exec" title="Sudah eksekusi/done TAPI CA belum di-settle (nunggu settle). Normal.">▷ Belum Settle</span> <span class="stb st-settle" title="Sudah di-settle (CA DR cocok, atau TM: DR sudah serahkan report).">✓ Settle</span> <span class="stb st-blf" title="Struktur Fani — budget TERPISAH, bukan DR/CA.">✦ BLF</span></div>
 </div>
@@ -474,6 +560,7 @@ exF();
 </div>
 
 </div>
+<button class="fab" onclick="shNew()" title="Ajukan kegiatan baru">＋</button>
 <footer>Janus DR Dashboard · update 2026-07-07 00:00 WIB · field jadwal/program saja (tanpa angka bisnis)</footer>
 <script>
 function tb(t){
