@@ -1,8 +1,7 @@
 <!doctype html><html lang="id"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow"><title>Janus — Papan Kegiatan DR</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- font: system-stack (Bayer pakai Arial on-screen) — nol webfont, cepat di jaringan lambat -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -289,6 +288,61 @@ details.isec summary small{font-weight:400;color:var(--ink-4);font-size:12px}
 @media(min-width:760px){.fab{bottom:24px}}
 .panel.on ~ .fab{display:flex}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ═══════════ RESKIN v7 — LINEAR MINIMAL-EDITORIAL ═══════════
+   Flat (nol shadow → garis rambut) · putih editorial · 1 aksen (--ablue) ·
+   hierarki dibawa tipografi · label seksi = eyebrow uppercase · lega.
+   Layer override (menang krn belakangan) — nol perubahan class, JS aman. */
+:root{
+  --canvas:#FBFBFC;--surface:#FFFFFF;--rail:#F4F5F7;
+  --line:rgba(16,56,79,.09);--line-strong:rgba(16,56,79,.14);--hair:rgba(16,56,79,.06);
+  --sh-card:none;--sh-pop:none;--today-c:#0071BC;
+}
+body{font-family:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  line-height:1.6;letter-spacing:-.1px}
+/* header: bersih, tanpa strip gradient, tipe editorial (logo salib Bayer tetap) */
+header{padding:18px 18px 16px}
+header:after{display:none}
+header h1{font-size:22px;letter-spacing:-.6px}
+header p{font-size:12px;color:var(--ink-4)}
+.ppcount{background:transparent;border:1px solid #e6b800;color:#8a6d00}
+/* nav: 1 aksen halus (tanpa pil blok) */
+.tabs{box-shadow:none;border-top:1px solid var(--line)}
+.tab.on{background:transparent;color:var(--ablue)}
+@media(min-width:760px){.tab.on{border-bottom-color:var(--ablue)}}
+/* kanvas lebih lega + kolom baca sempit */
+.wrap{padding:22px 16px 104px;max-width:760px}
+/* permukaan flat hairline */
+.card{padding:16px 18px;border-radius:14px}
+.kcol{background:var(--surface)}
+.toast{box-shadow:none}
+.fab{border-radius:16px;box-shadow:0 2px 8px rgba(0,113,188,.26)}
+/* tabel & header kalender: dari blok navy → terang + eyebrow */
+.cal th,.tbl th{background:var(--surface);color:var(--ink-4);border:0;
+  border-bottom:1px solid var(--line-strong);text-transform:uppercase;
+  letter-spacing:.07em;font-weight:600;font-size:10px}
+.cal td,.cal th{border-color:var(--hair)}
+.cal td.today{background:rgba(0,113,188,.06);outline-color:var(--ablue)}
+.cal td.today .dn{color:var(--ablue)}
+/* seksi = eyebrow uppercase (bukan judul tebal navy) */
+h2.sec{font-size:12.5px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--ink-4);margin:32px 0 8px}
+h2.sec small{text-transform:none;letter-spacing:0;color:var(--ink-4)}
+.qh{background:transparent;border:0;color:var(--ink-4)}
+/* agenda: angka hari BESAR & tight (editorial) */
+.ag-g{margin-bottom:36px}
+.ag-h{border-bottom:1px solid var(--line);padding-bottom:10px}
+.ag-h .d{font-size:30px;letter-spacing:-1px;font-weight:600}
+.arow{padding:14px 2px}
+.arow .at{font-size:15.5px}
+/* chip status: pill tenang (tetap semantik) */
+.stb{border-radius:999px;font-weight:500}
+/* filter & input: radius Linear + fokus 1-aksen */
+.exctl input,.exctl select{border-radius:10px}
+.shbox{border-radius:20px 20px 0 0}
+.shbtn{border-radius:12px}
+.shin:focus,.exctl input:focus,.exctl select:focus{outline-color:var(--ablue);border-color:var(--ablue)}
+summary::-webkit-details-marker{color:var(--ink-4)}
 </style></head><body>
 <header><div class="hbar"><span class="xlogo"><svg viewBox="0 0 24 24" width="26" height="26"><rect x="10" y="2" width="4" height="20" rx="1.4" fill="#00BCFF"/><rect x="2" y="10" width="20" height="4" rx="1.4" fill="#89D329"/></svg></span><div><h1>Papan Kegiatan DR</h1><p>Tap kegiatan — rubah tanggal / lokasi langsung tersimpan</p></div></div></header>
 <nav class="tabs">
