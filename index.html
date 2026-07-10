@@ -424,6 +424,7 @@ function askAct(act){
   if(act==='T'){inp.type='date';inp.value=x.tgl||'';}
   else{inp.type='text';inp.value='';
     inp.placeholder=act==='L'?'mis. Desa Guci, Kec Godong':(act==='B'?'mis. petani batal / cuaca / dobel':'mis. kegiatan tidak pernah dilaksanakan');}
+  document.getElementById('shrev').style.display='none';
   f.style.display='block';inp.focus();
 }
 function usulMsg(x){
@@ -464,9 +465,37 @@ function sendUsul(){
     toast(a==='F'?'✅ Laporan terkirim — TM akan investigasi settle ini.':'✅ Tersimpan! Papan resmi update otomatis (±10 menit).');
   },document.querySelector('#shform .shbtn.go'));
 }
+function openRevisi(){
+  ACT='R';var x=KB[CUR];if(!x)return;
+  document.getElementById('shform').style.display='none';
+  document.getElementById('shnew').style.display='none';
+  document.getElementById('rvtgl').value=x.tgl||'';
+  var rl=document.getElementById('rvlok');rl.value='';
+  rl.placeholder='sekarang: '+(x.desa||x.kec||'-')+' — mis. Desa Guci, Kec Godong';
+  document.getElementById('shrev').style.display='block';
+  document.getElementById('rvtgl').focus();
+}
+function sendRevisi(){
+  var x=KB[CUR];if(!x)return;
+  var tgl=document.getElementById('rvtgl').value.trim();
+  var lok=document.getElementById('rvlok').value.trim();
+  if(!tgl&&!lok){toast('Isi tanggal atau lokasi ya (boleh dua-duanya).');return;}
+  var msg='REVISI PLAN: '+x.jenis+' · '+x.dmr+' · '+(x.desa||x.kec)+' ('+(x.tgl||'TBD')+')'
+    +(tgl?' → tgl '+tgl:'')+(lok?' → lokasi '+lok:'')+' — dari papan DR';
+  if(!API||!x.ref){fallbackCopy(msg);shClose();return;}
+  var i=CUR;
+  var body={action:'revisi_plan',ref:x.ref,nama:x.nama,dr:x.dmr,jenis:x.jenis,kec:x.kec,desa:x.desa,tgl_lama:x.tgl,baru:tgl,baru_lokasi:lok};
+  postAction(body,function(){
+    if(tgl){KB[i].tgl=tgl;}
+    if(lok){KB[i].desa=lok;}
+    KB[i].pend=true;kbF();
+    toast('✅ Tersimpan! Papan resmi update otomatis (±10 menit).');
+  },document.querySelector('#shrev .shbtn.go'));
+}
 function shNew(){
   CUR=null;ACT=null;
   document.getElementById('shform').style.display='none';
+  document.getElementById('shrev').style.display='none';
   document.getElementById('shbtns').innerHTML='';
   document.getElementById('shtitle').textContent='➕ Ajukan kegiatan baru';
   document.getElementById('shsub').textContent='Usulan masuk ke TM dulu (perlu ACC) — baru muncul di papan.';
@@ -484,6 +513,7 @@ function sendNew(){
 function shOpen(i){
   CUR=i;ACT=null;var x=KB[i];
   document.getElementById('shform').style.display='none';
+  document.getElementById('shrev').style.display='none';
   document.getElementById('shnew').style.display='none';
   document.getElementById('shtitle').textContent=x.jenis+' — '+x.dmr;
   document.getElementById('shsub').textContent=(x.tgl||'TBD')+' · '+x.kec+(x.desa?' · '+x.desa:'')+' · DSR '+x.dsr;
@@ -491,8 +521,7 @@ function shOpen(i){
   if(x.col==='plan'&&!x.ref){
     b+='<div class="muted" style="padding:6px 2px">🌱 Demoplot — perubahan lewat TM (belum bisa dari papan).</div>';
   } else if(x.col==='plan'){
-    b+='<button class="shbtn go" onclick="askAct(\'T\')">📅 Rubah Tanggal</button>';
-    b+='<button class="shbtn" onclick="askAct(\'L\')">📍 Rubah Lokasi</button>';
+    b+='<button class="shbtn go" onclick="openRevisi()">✏️ Revisi Plan (tanggal &amp; lokasi)</button>';
     b+='<button class="shbtn danger" onclick="askAct(\'B\')">⛔ Batalkan</button>';
   } else if(x.col==='exec'){
     b+='<div class="muted" style="padding:6px 2px">▷ Sudah dieksekusi — status settle diurus TM. Tak ada aksi di sini.</div>';
@@ -715,6 +744,12 @@ exF();
       <label id="shlbl" class="muted" style="display:block;margin:10px 0 4px"></label>
       <input id="shin" class="shin">
       <button class="shbtn go" onclick="sendUsul()">📨 Kirim</button>
+    </div>
+    <div id="shrev" style="display:none">
+      <label class="muted nlbl">Tanggal baru (boleh kosong)</label><input id="rvtgl" type="date" class="shin">
+      <label class="muted nlbl">Lokasi baru — desa / kecamatan (boleh kosong)</label><input id="rvlok" class="shin" placeholder="mis. Desa Guci, Kec Godong">
+      <div class="muted" style="font-size:11px;margin:6px 2px">Isi salah satu atau dua-duanya — sekali kirim.</div>
+      <button class="shbtn go" onclick="sendRevisi()">📨 Kirim revisi</button>
     </div>
     <div id="shnew" style="display:none">
       <label class="muted nlbl">Jenis</label><select id="njenis" class="shin"><option value="FED">FED</option><option value="BC">BC</option><option value="ODP">ODP</option><option value="FIELD TRIP RICE-CORN">FIELD TRIP RICE-CORN</option><option value="FIELD TRIP VEGE">FIELD TRIP VEGE</option><option value="HARVESTING DAY">HARVESTING DAY</option><option value="LOCAL RETAILER GATHERING">LOCAL RETAILER GATHERING</option><option value="LUCKY DRAW">LUCKY DRAW</option><option value="SFED">SFED</option><option value="SPECIAL FIELD TRIP">SPECIAL FIELD TRIP</option><option value="STAKEHOLDER GATHERING">STAKEHOLDER GATHERING</option><option value="WORO-WORO">WORO-WORO</option></select>
