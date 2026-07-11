@@ -527,7 +527,9 @@ function shOpen(i){
     b+='<button class="shbtn go" onclick="openRevisi()">✏️ Revisi Plan (tanggal &amp; lokasi)</button>';
     b+='<button class="shbtn danger" onclick="askAct(\'B\')">⛔ Batalkan</button>';
   } else if(x.col==='exec'){
-    b+='<div class="muted" style="padding:6px 2px">▷ Sudah dieksekusi — status settle diurus TM. Tak ada aksi di sini.</div>';
+    b+= x.is_tm
+      ? '<div class="muted" style="padding:6px 2px">▷ Sudah dieksekusi — settle via report DR ke Abang (budget TM, bukan CA SIM).</div>'
+      : '<div class="muted" style="padding:6px 2px">▷ Sudah dieksekusi — <b>belum settle</b> (nunggu CA SIM cair). Tak ada aksi di sini.</div>';
   } else if(x.col==='batal'){
     b+='<div class="muted" style="padding:6px 2px">⛔ Dibatalkan'+(x.cat?' — alasan: '+x.cat:'')+'.</div>';
   } else {
