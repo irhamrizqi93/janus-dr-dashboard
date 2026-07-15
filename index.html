@@ -158,6 +158,41 @@ table{border-collapse:collapse;width:100%}
   padding:14px 16px;margin-top:14px;box-shadow:var(--sh-card)}
 h2.sec{font-size:16px;font-weight:600;letter-spacing:-.2px;color:var(--navy);margin:24px 0 2px}
 h2.sec small{font-weight:400;letter-spacing:0}
+/* ── Budget DR (tab DR) — 1 fokus: donut + kartu per DSR. Tabel lebar HARAM di HP. ── */
+.bhero{padding:16px}
+.bwrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.donut{width:132px;height:132px;flex:none}
+.dnum{font:600 19px/1 -apple-system,Arial,sans-serif;fill:var(--navy)}
+.dsub{font:400 10px/1 -apple-system,Arial,sans-serif;fill:var(--ink-3)}
+.blegend{flex:1;min-width:150px;display:flex;flex-direction:column;gap:5px}
+.lgi{display:flex;align-items:center;gap:8px;font-size:13px}
+.lgd{width:9px;height:9px;border-radius:2px;flex:none}
+.lgn{flex:1;color:var(--ink-2)}
+.lgv{font-weight:600;color:var(--navy);font-variant-numeric:tabular-nums}
+.bnote{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-2)}
+.bnote b{color:var(--navy)}
+.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;margin-top:10px}
+.bcard{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px}
+.bhd{display:flex;align-items:center;gap:7px;margin-bottom:9px}
+.bhd b{color:var(--navy);font-size:14px}
+.bhd small{flex:1;font-size:11px}
+.bpct{font-weight:700;font-size:15px;font-variant-numeric:tabular-nums}
+.brow{display:flex;align-items:center;gap:7px;margin:4px 0;font-size:12px}
+.bj{width:30px;color:var(--ink-3);font-weight:600;font-size:11px}
+.bbar{flex:1;height:5px;background:var(--rail,#F1F4F6);border-radius:99px;overflow:hidden}
+.bbar i{display:block;height:100%;border-radius:99px}
+.bu{width:42px;text-align:right;color:var(--ink-3);font-size:11px;font-variant-numeric:tabular-nums}
+.bv{width:56px;text-align:right;color:var(--navy);font-variant-numeric:tabular-nums}
+.bsub{margin-top:9px;padding-top:8px;border-top:1px solid var(--hair,rgba(16,56,79,.08));font-size:13px;font-weight:600;color:var(--navy)}
+.funn{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap}
+.fn{font-size:10.5px;font-weight:600;border-radius:99px;padding:2px 8px}
+.fn.plan{background:#F1F4F6;color:var(--ink-3)}
+.fn.exec{background:#E8F4FD;color:#0071BC}
+.fn.set{background:#EEF8E0;color:#4A7A12}
+.bsrc{font-size:11px;margin:10px 0 0;line-height:1.5}
+.jsched{margin-top:22px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.jsched>summary{cursor:pointer;padding:12px;font-size:14px;font-weight:600;color:var(--navy)}
+.jsched[open]>summary{border-bottom:1px solid var(--line)}
 .dsrh{font-size:15px;font-weight:600;color:var(--ablue);margin:0 0 8px}  /* DS Card title: interactive blue */
 .dsrh small{color:var(--ink-4);font-weight:400;font-size:12px}
 details{border-top:1px solid var(--rail);padding:8px 0}
