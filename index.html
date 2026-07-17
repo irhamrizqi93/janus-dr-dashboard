@@ -614,7 +614,7 @@ function agRow(x,i){
   var late=x.col==='plan'&&x.tgl&&x.tgl<TODAY;
   return '<div class="arow" onclick="shOpen('+i+')">'+ringOf(x)+
     '<div class="am"><div class="at"><span class="exjt">'+x.jenis+'</span><b>'+(x.bt?(x.nama||x.dmr):((x.dmr&&x.dmr!=='-')?x.dmr:(x.nama||x.dmr)))+'</b></div>'+
-    '<div class="al">'+(x.bt&&x.dmr&&x.dmr!=='-'?x.dmr+' · ':'')+x.kec+(x.desa?' · '+x.desa:'')+(x.crop?' · '+x.crop:'')+'</div></div>'+
+    '<div class="al">'+x.kec+(x.desa?' · '+x.desa:'')+(x.crop?' · '+x.crop:'')+'</div></div>'+
     '<span class="ad'+(late?' late':'')+'">'+(x.tgl?x.tgl.slice(5):'—')+'</span></div>';
 }
 var MAP=null,MLYR=null;
