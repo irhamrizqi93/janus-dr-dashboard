@@ -38,15 +38,23 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.02em;margin:3px 0 2px}
 label.fl{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
 select{appearance:none;width:100%;font:inherit;font-weight:600;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 36px 11px 12px;cursor:pointer;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236E8494' stroke-width='2.2' stroke-linecap='round'><path d='M6 9l6 6 6-6'/></svg>");background-repeat:no-repeat;background-position:right 11px center}
 .combo{position:relative}
-#kiosSearch{width:100%;font:inherit;font-weight:600;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 12px}
-#kiosSearch::placeholder{color:var(--ink4);font-weight:500}
-.combolist{position:absolute;top:100%;left:0;right:0;z-index:30;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(16,56,79,.18);margin-top:4px;max-height:260px;overflow-y:auto;display:none}
+#kiosSearch{width:100%;font:inherit;font-weight:600;color:var(--ink);background:var(--rail);border:1px solid var(--line);border-radius:12px;padding:12px 40px 12px 14px}
+#kiosSearch::placeholder{color:var(--ink3);font-weight:500}
+#kiosSearch:focus{background:var(--surface);border-color:var(--ablue)}
+.searchic{position:absolute;right:13px;top:22px;color:var(--ink3);pointer-events:none}
+.combolist{position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:30;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 28px rgba(16,56,79,.2);overflow:hidden;display:none}
 .combolist.open{display:block}
-.combolist .opt{padding:9px 12px;cursor:pointer;font-size:13.5px;font-weight:600;border-top:1px solid var(--hair)}
-.combolist .opt:first-child{border-top:0}
-.combolist .opt.active,.combolist .opt:hover{background:var(--rail)}
-.combolist .opt .id{color:var(--ink3);font-size:11.5px;font-weight:500}
-.combolist .none{padding:10px 12px;color:var(--ink3);font-size:13px}
+.combohd{display:grid;grid-template-columns:74px 1fr 38px;gap:8px;background:var(--ablue);color:#fff;font-size:11px;font-weight:700;letter-spacing:.02em;padding:8px 12px}
+.combohd .r{text-align:right}
+.comborows{max-height:232px;overflow-y:auto}
+.opt{display:grid;grid-template-columns:74px 1fr 38px;gap:8px;padding:10px 12px;cursor:pointer;font-size:13px;border-top:1px solid var(--hair);align-items:center}
+.opt:first-child{border-top:0}
+.opt:hover,.opt.active{background:var(--rail)}
+.opt .oid{color:var(--ablue);font-weight:600;font-variant-numeric:tabular-nums}
+.opt .onm{font-weight:600;color:var(--ink);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.opt .onm b{color:var(--bad)}
+.opt .otp{text-align:right;color:var(--ink3);font-weight:700;font-size:12px}
+.combonone{padding:12px;color:var(--ink3);font-size:13px}
 .meta{display:flex;gap:18px;flex-wrap:wrap;margin-top:13px;padding-top:13px;border-top:1px solid var(--hair)}
 .meta .kv{display:flex;flex-direction:column;gap:1px}
 .meta .k{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3)}
@@ -159,12 +167,12 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;bac
         <button id="tR2" role="tab" aria-selected="false">R2 &middot; Retailer 2</button>
       </div>
       <div class="selrow" style="flex:1;min-width:210px">
-        <label class="fl" for="kiosSearch">Retailer</label>
+        <label class="fl" for="kiosSearch">Kios</label>
         <div class="combo">
-          <input id="kiosSearch" type="text" placeholder="Cari nama / ID retailer..." autocomplete="off" aria-label="Cari retailer">
+          <input id="kiosSearch" type="text" placeholder="Pilih kios" autocomplete="off" aria-label="Cari kios">
+          <svg class="searchic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
           <div id="kiosList" class="combolist"></div>
         </div>
-        <select id="kios" aria-label="Pilih dari daftar" style="margin-top:6px"></select>
       </div>
     </div>
     <div class="meta" id="meta"></div>
@@ -387,19 +395,21 @@ function renderRedemption(c){
 }
 
 function loadKios(){proj={Q3:{A:k.ach.Q3.A,B:k.ach.Q3.B,C:k.ach.Q3.C},Q4:0};cart={};renderStatic();update();}
-const sel=document.getElementById('kios');
-function fillKios(){sel.innerHTML='';SC.kios.forEach((kk,i)=>{const o=document.createElement('option');o.value=i;o.textContent=kk.nama+' - '+kk.id;sel.appendChild(o);});}
 const search=document.getElementById('kiosSearch'), klist=document.getElementById('kiosList');
-function pickKios(i){sel.value=i;k=SC.kios[i];search.value=k.nama;klist.classList.remove('open');loadKios();}
+const ALL=[];['R1','R2'].forEach(s=>DATA[s].kios.forEach((kk,idx)=>ALL.push({nama:kk.nama,id:kk.id,scheme:s,idx,ai:ALL.length})));
+function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function hl(name,q){const i=q?name.toLowerCase().indexOf(q):-1;return i<0?esc(name):esc(name.slice(0,i))+'<b>'+esc(name.slice(i,i+q.length))+'</b>'+esc(name.slice(i+q.length));}
+function pick(e){if(e.scheme!==scheme){setScheme(e.scheme);applySchemeUI();}k=SC.kios[e.idx];search.value=k.nama;klist.classList.remove('open');loadKios();}
 function renderList(){const q=(search.value||'').toLowerCase().trim();
-  const m=SC.kios.map((kk,i)=>({kk,i})).filter(x=>!q||(x.kk.nama+' '+x.kk.id).toLowerCase().includes(q)).slice(0,40);
-  klist.innerHTML=m.length?m.map(x=>'<div class="opt" data-i="'+x.i+'">'+x.kk.nama+' <span class="id">- '+x.kk.id+'</span></div>').join(''):'<div class="none">tak ada retailer cocok</div>';
+  const m=ALL.filter(x=>!q||(x.nama+' '+x.id).toLowerCase().includes(q)).slice(0,60);
+  const rows=m.length?m.map(x=>'<div class="opt" data-j="'+x.ai+'"><span class="oid">'+esc(x.id)+'</span><span class="onm">'+hl(x.nama,q)+'</span><span class="otp">'+x.scheme+'</span></div>').join(''):'<div class="combonone">tak ada kios cocok</div>';
+  klist.innerHTML='<div class="combohd"><span>ID Kios</span><span>Nama kios</span><span class="r">Tipe</span></div><div class="comborows">'+rows+'</div>';
   klist.classList.add('open');
-  klist.querySelectorAll('.opt').forEach(o=>o.onmousedown=e=>{e.preventDefault();pickKios(+o.dataset.i);});}
+  klist.querySelectorAll('.opt').forEach(o=>o.onmousedown=ev=>{ev.preventDefault();pick(ALL[+o.dataset.j]);});}
 search.oninput=renderList;
 search.onfocus=()=>{search.select();renderList();};
-search.onblur=()=>setTimeout(()=>klist.classList.remove('open'),150);
-search.onkeydown=e=>{if(e.key==='Enter'){const f=klist.querySelector('.opt');if(f){e.preventDefault();pickKios(+f.dataset.i);}}else if(e.key==='Escape')klist.classList.remove('open');};
+search.onblur=()=>setTimeout(()=>klist.classList.remove('open'),160);
+search.onkeydown=e=>{if(e.key==='Enter'){const f=klist.querySelector('.opt');if(f){e.preventDefault();pick(ALL[+f.dataset.j]);}}else if(e.key==='Escape')klist.classList.remove('open');};
 function applySchemeUI(){const r2=scheme==='R2';
   document.getElementById('rowRedem').style.display=r2?'none':'';
   document.getElementById('redblock').style.display=r2?'none':'';
@@ -410,14 +420,13 @@ function applySchemeUI(){const r2=scheme==='R2';
   else{n.style.display='none';}
   document.getElementById('tR1').setAttribute('aria-selected',String(!r2));
   document.getElementById('tR2').setAttribute('aria-selected',String(r2));}
-function switchScheme(s){setScheme(s);cart={};fillKios();applySchemeUI();loadKios();search.value=k.nama;}
-sel.onchange=()=>{pickKios(+sel.value);};
+function switchScheme(s){setScheme(s);cart={};applySchemeUI();loadKios();search.value=k.nama;klist.classList.remove('open');}
 document.getElementById('tR1').onclick=()=>switchScheme('R1');
 document.getElementById('tR2').onclick=()=>switchScheme('R2');
 document.getElementById('redadd').onclick=()=>{const pick=document.getElementById('redpick');if(pick.disabled)return;
   const i=+pick.value,q=+document.getElementById('redqty').value,mq=Math.min(q,MAXITEM-cartItems());
   if(mq>=1){cart[i]=(cart[i]||0)+mq;update();}};
 document.getElementById('btnpdf').onclick=()=>window.print();
-fillKios();applySchemeUI();loadKios();search.value=k.nama;
+applySchemeUI();loadKios();search.value=k.nama;
 </script>
 </body></html>
