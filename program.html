@@ -280,16 +280,19 @@ const cartCost=()=>Object.entries(cart).reduce((s,e)=>s+redeem[e[0]][0]*e[1],0);
 const cartValue=()=>Object.entries(cart).reduce((s,e)=>s+redeem[e[0]][1]*e[1],0);
 
 function groupsOf(q){
-  if(q==='Q1'||q==='Q2')return {A:k.ach[q].A,B:k.ach[q].B,C:k.ach[q].C,total:k.ach[q].total};
-  if(q==='Q3')return {A:proj.Q3.A,B:proj.Q3.B,C:proj.Q3.C,total:proj.Q3.A+proj.Q3.B+proj.Q3.C};
-  const t=proj.Q4;return {A:t*groupsplit.A,B:t*groupsplit.B,C:t*groupsplit.C,total:t};
+  if(q==='Q1'||q==='Q2')return {A:k.ach[q].A,B:k.ach[q].B,C:k.ach[q].C,total:k.ach[q].total};  // grup AKTUAL BRP
+  if(q==='Q3')return {A:proj.Q3.A,B:proj.Q3.B,C:proj.Q3.C,total:proj.Q3.A+proj.Q3.B+proj.Q3.C};  // FC per-grup (slider)
+  // Q4: RATA-RATA proporsi grup dari Q1+Q2 aktual (Q4 belum ada rincian grup); fallback 30/40/30
+  const t=proj.Q4, base=k.ach.Q1.total+k.ach.Q2.total;
+  const pr=base>0?{A:(k.ach.Q1.A+k.ach.Q2.A)/base,B:(k.ach.Q1.B+k.ach.Q2.B)/base,C:(k.ach.Q1.C+k.ach.Q2.C)/base}:groupsplit;
+  return {A:t*pr.A,B:t*pr.B,C:t*pr.C,total:t};
 }
 // SKEMA TAHUNAN: split grup 30/40/30 dari TOTAL kuartal (sesuai Excel), BUKAN komposisi aktual.
 // (Q3 campaign tetap pakai grup aktual di q3campaign &mdash; itu beda skema.) Terverifikasi vs Excel I44.
 function qbonus(q){const g=groupsOf(q),tgt=k.target[q],p=tgt?g.total/tgt:0,pass=p>=1;
-  let b=0;for(const x of ABC)b+=pass?g.total*groupsplit[x]*mult[x]:0;return {g,tgt,pct:p,pass,bonus:b};}
+  let b=0;for(const x of ABC)b+=pass?g[x]*mult[x]:0;return {g,tgt,pct:p,pass,bonus:b};}   // multiplier per GRUP PRODUK aktual
 function semester(qs){const gs=qs.map(groupsOf),tgt=qs.reduce((s,q)=>s+k.target[q],0),tot=gs.reduce((s,x)=>s+x.total,0),p=tgt?tot/tgt:0,pass=p>=1;
-  let sem=0;for(const x of ABC)sem+=pass?tot*groupsplit[x]*mult[x]:0;
+  let sem=0;for(const x of ABC){const ga=gs.reduce((s,g)=>s+g[x],0);sem+=pass?ga*mult[x]:0;}   // grup aktual, bukan 30/40/30
   const qsum=qs.reduce((s,q)=>s+qbonus(q).bonus,0);return {tgt,tot,pct:p,pass,max:Math.max(sem,qsum)};}
 function q3campaign(){const g=groupsOf('Q3'),tgt=k.target.Q3,gateT=tgt*Q3CFG.min_pct/100,open=g.total>=gateT;
   if(!open)return {open,gateT,need:gateT-g.total,reward:0};
