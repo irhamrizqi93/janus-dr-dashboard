@@ -1,0 +1,398 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Kalkulator Program - Retailer R1</title>
+<style>
+:root{
+  --navy:#10384F; --ablue:#0071BC; --capri:#00BCFF; --green-b:#89D329;
+  --canvas:#F4F6F7; --rail:#E9EEF0; --surface:#FFFFFF;
+  --line:rgba(16,56,79,.11); --hair:rgba(16,56,79,.06);
+  --ink:#10384F; --ink2:#3E5B6D; --ink3:#6E8494; --ink4:#9DAFBA;
+  --good:#227544; --good-bg:#E4F2EA; --warn:#8A5200; --warn-bg:#FBEED2; --bad:#C0271F; --bad-bg:#FBE7E5;
+  --shadow:0 1px 2px rgba(16,56,79,.05); --radius:16px;
+}
+@media (prefers-color-scheme:dark){:root{
+  --canvas:#0B1922;--rail:#15272F;--surface:#13242D;--line:rgba(255,255,255,.09);--hair:rgba(255,255,255,.05);
+  --ink:#EAF1F5;--ink2:#B7C7D0;--ink3:#8298A5;--ink4:#5B7280;
+  --good:#7CD497;--good-bg:#123322;--warn:#E4B15C;--warn-bg:#33280C;--bad:#F0968E;--bad-bg:#361713;
+  --shadow:0 1px 2px rgba(0,0,0,.28);}}
+:root[data-theme="light"]{--canvas:#F4F6F7;--rail:#E9EEF0;--surface:#FFFFFF;--line:rgba(16,56,79,.11);--hair:rgba(16,56,79,.06);--ink:#10384F;--ink2:#3E5B6D;--ink3:#6E8494;--ink4:#9DAFBA;--good:#227544;--good-bg:#E4F2EA;--warn:#8A5200;--warn-bg:#FBEED2;--bad:#C0271F;--bad-bg:#FBE7E5;--shadow:0 1px 2px rgba(16,56,79,.05);}
+:root[data-theme="dark"]{--canvas:#0B1922;--rail:#15272F;--surface:#13242D;--line:rgba(255,255,255,.09);--hair:rgba(255,255,255,.05);--ink:#EAF1F5;--ink2:#B7C7D0;--ink3:#8298A5;--ink4:#5B7280;--good:#7CD497;--good-bg:#123322;--warn:#E4B15C;--warn-bg:#33280C;--bad:#F0968E;--bad-bg:#361713;--shadow:0 1px 2px rgba(0,0,0,.28);}
+*{box-sizing:border-box}
+body{margin:0;background:var(--canvas);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,"Segoe UI",sans-serif;font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;letter-spacing:-.005em}
+.wrap{max-width:560px;margin:0 auto;padding:18px 15px 64px}
+.num{font-variant-numeric:tabular-nums}
+header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}
+.eyebrow{font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--ink3)}
+h1{font-size:22px;font-weight:800;letter-spacing:-.02em;margin:3px 0 2px}
+.sub{color:var(--ink3);font-size:12.5px}
+.brandmark{width:28px;height:28px;flex:0 0 auto;border-radius:7px;background:var(--navy);display:grid;place-items:center;margin-top:2px}
+.brandmark::before{content:"";width:12px;height:12px;background:linear-gradient(var(--capri),var(--capri)) 4.5px 0/3px 12px no-repeat,linear-gradient(var(--green-b),var(--green-b)) 0 4.5px/12px 3px no-repeat}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 16px;margin-bottom:11px}
+.ttl{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);margin:0 0 13px;display:flex;align-items:center;gap:8px}
+.ttl .r{margin-left:auto;font-weight:600;letter-spacing:.02em;text-transform:none;font-size:11px;color:var(--ink4)}
+.seg{display:inline-flex;background:var(--rail);border-radius:10px;padding:3px;gap:2px;border:1px solid var(--line)}
+.seg button{appearance:none;border:0;background:transparent;color:var(--ink2);font:inherit;font-weight:600;font-size:13px;padding:6px 13px;border-radius:8px;cursor:pointer;white-space:nowrap}
+.seg button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.seg button:disabled{color:var(--ink4);cursor:not-allowed}
+.seg button:focus-visible,select:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(--ablue);outline-offset:1px}
+.badge{font-size:9px;font-weight:700;letter-spacing:.04em;background:var(--warn-bg);color:var(--warn);padding:1px 5px;border-radius:5px;margin-left:5px;vertical-align:1px}
+.selrow{display:flex;flex-direction:column;gap:5px}
+label.fl{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
+select{appearance:none;width:100%;font:inherit;font-weight:600;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 36px 11px 12px;cursor:pointer;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236E8494' stroke-width='2.2' stroke-linecap='round'><path d='M6 9l6 6 6-6'/></svg>");background-repeat:no-repeat;background-position:right 11px center}
+.meta{display:flex;gap:18px;flex-wrap:wrap;margin-top:13px;padding-top:13px;border-top:1px solid var(--hair)}
+.meta .kv{display:flex;flex-direction:column;gap:1px}
+.meta .k{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3)}
+.meta .v{font-size:15px;font-weight:700}
+/* sliders */
+.sl{padding:12px 0;border-top:1px solid var(--hair)}
+.sl:first-of-type{border-top:0;padding-top:2px}
+.sl .head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px;gap:8px}
+.sl .gname{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13.5px}
+.sl .vals{font-size:12px;color:var(--ink3);text-align:right}
+.sl .vals b{color:var(--ink);font-weight:800;font-size:13.5px}
+.dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:3px;background:var(--rail);outline:none;margin:5px 0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:19px;height:19px;border-radius:50%;background:var(--ablue);border:3px solid var(--surface);box-shadow:0 1px 3px rgba(16,56,79,.3);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;background:var(--ablue);border:3px solid var(--surface);box-shadow:0 1px 3px rgba(16,56,79,.3);cursor:pointer}
+.gate{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:11px;font-size:12.5px;font-weight:600;margin-top:14px}
+.gate.open{background:var(--good-bg);color:var(--good)}.gate.shut{background:var(--warn-bg);color:var(--warn)}
+/* poin dikejar */
+.klbl{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
+.kbig{font-size:26px;font-weight:800;letter-spacing:-.025em;margin-top:3px;line-height:1.05}
+.kbig small{font-size:13px;font-weight:600;color:var(--ink3)}
+.ksub{font-size:12px;color:var(--ink3);margin-top:3px}
+/* rows */
+.row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-top:1px solid var(--hair);font-size:14px;gap:10px}
+.row:first-of-type{border-top:0}
+.row .l{color:var(--ink2);display:flex;flex-direction:column;gap:1px;min-width:0}
+.row .l .s{font-size:11.5px;color:var(--ink3)}
+.row .r{font-weight:700;white-space:nowrap;text-align:right}
+.row.tot{border-top:1.5px solid var(--line);margin-top:4px;padding-top:12px}
+.row.tot .l{font-weight:800;color:var(--ink);font-size:15px}
+.row.tot .r{font-size:18px;font-weight:800}
+/* ach bar */
+.abig{font-size:26px;font-weight:800;letter-spacing:-.025em;line-height:1.05}
+.abig small{font-size:13px;font-weight:600;color:var(--ink3)}
+.acap{font-size:12px;color:var(--ink3);margin-top:3px}
+.abar{position:relative;height:13px;background:var(--rail);border-radius:7px;overflow:hidden;display:flex;margin-top:12px}
+.abar i{display:block;height:100%}
+.abar .rl{background:var(--ablue)}
+.abar .fc{background:repeating-linear-gradient(45deg,var(--capri),var(--capri) 4px,transparent 4px,transparent 8px);opacity:.9}
+.abar .tk{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--navy);z-index:2}
+.aleg{display:flex;gap:15px;margin-top:8px;font-size:11px;color:var(--ink3);flex-wrap:wrap}
+.aleg span{display:inline-flex;align-items:center;gap:5px}
+.aleg .sw{width:11px;height:9px;border-radius:2px}
+/* semester gate */
+.sgh{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:15px 0 8px;padding-top:13px;border-top:1px solid var(--hair);display:flex;align-items:baseline;gap:7px}
+.sgh .tag{font-weight:600;letter-spacing:.01em;text-transform:none;font-size:11px;color:var(--ink4)}
+.semrow{display:flex;gap:9px}
+.semchip{flex:1;background:var(--rail);border-radius:11px;padding:10px 12px}
+.semchip .t{font-size:11px;color:var(--ink3);font-weight:700}
+.semchip .v{font-size:14px;font-weight:800;margin-top:2px}
+.semchip .sub{font-size:10.5px;color:var(--ink3);font-weight:600;margin-top:1px}
+.semchip.ok{background:var(--good-bg)}.semchip.ok .v{color:var(--good)}
+.semchip.prog{background:var(--warn-bg)}.semchip.prog .v{color:var(--warn)}
+/* quarter bars - STATIC layout */
+.qbars{display:flex;flex-direction:column;gap:10px;margin-top:9px}
+.qb{display:grid;grid-template-columns:20px 1fr 122px;gap:11px;align-items:center}
+.qb .ql{font-weight:800;font-size:12px;color:var(--ink2)}
+.qb .ql .fc{display:block;font-weight:600;color:var(--ink4);font-size:8.5px;letter-spacing:.03em}
+.qb .qbar{position:relative;height:6px;background:var(--rail);border-radius:3px;overflow:hidden}
+.qb .qbar i{display:block;height:100%;border-radius:3px}
+.qb .qbar .tk{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink4);z-index:2}
+.qb .qv{font-size:12px;font-weight:700;text-align:right;white-space:nowrap}
+.qb .qv small{color:var(--ink3);font-weight:600}
+.qb .qv .pc{display:inline-block;min-width:38px;text-align:right}
+/* reward hero */
+.hero{border-radius:var(--radius);padding:17px 17px;margin-bottom:11px;background:linear-gradient(135deg,var(--navy),#15495f);color:#fff}
+.hero .lbl{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#A9C6D6}
+.hero .big{font-size:30px;font-weight:800;letter-spacing:-.025em;margin-top:4px;color:var(--green-b)}
+.hero .cap{font-size:12px;color:#A9C6D6;margin-top:4px}
+/* redemption */
+.redpick{display:flex;gap:8px;margin:12px 0 0}
+.redpick select{flex:1;min-width:0}.redpick #redqty{flex:0 0 62px;padding-right:28px;background-position:right 8px center}
+.redpick button{flex:0 0 auto;background:var(--ablue);color:#fff;border:0;border-radius:10px;padding:0 15px;font:inherit;font-weight:700;cursor:pointer}
+.redpick button:disabled{background:var(--ink4);cursor:not-allowed}
+.redcart{display:flex;flex-direction:column;gap:5px}
+.redcart:not(:empty){margin-top:9px}
+.redcartrow{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-radius:11px;background:var(--rail);font-size:13px;gap:10px}
+.redcartrow .ci{display:flex;flex-direction:column;gap:1px;min-width:0}
+.redcartrow .cp{font-weight:700}.redcartrow .cp small{color:var(--ink3);font-weight:600}
+.redcartrow .cr{font-size:12px;color:var(--ink3);font-weight:700}
+.redcartrow .cx{flex:0 0 auto;width:25px;height:25px;border:0;border-radius:7px;background:transparent;color:var(--ink3);font-size:16px;font-weight:700;cursor:pointer;display:grid;place-items:center;line-height:1}
+.redcartrow .cx:hover{background:var(--bad-bg);color:var(--bad)}
+.redsum{margin-top:10px;padding:12px;border-radius:12px;background:var(--rail);font-size:13px}
+.redsum.ok{background:var(--good-bg)}.redsum.ok .big{color:var(--good)}
+.redsum.short{background:var(--bad-bg)}.redsum.short .big{color:var(--bad)}.redsum.short .nudge{color:var(--bad)}
+.redsum .big{font-size:16px;font-weight:800}
+.redsum .m{color:var(--ink3);font-size:12px;margin-top:2px}.redsum .m b{color:var(--ink)}
+.redsum .nudge{margin-top:6px;font-size:12.5px;font-weight:600;color:var(--warn)}
+.pdfbtn{width:100%;padding:13px;border:1px solid var(--line);border-radius:13px;background:var(--surface);color:var(--ink);font:inherit;font-weight:700;cursor:pointer;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px}
+.pdfbtn:hover{border-color:var(--ablue);color:var(--ablue)}
+.foot{font-size:11px;color:var(--ink4);text-align:center;margin-top:8px;line-height:1.5}
+.tagfc{font-size:9.5px;font-weight:700;letter-spacing:.03em;padding:2px 6px;border-radius:5px;background:rgba(0,113,188,.11);color:var(--ablue);text-transform:uppercase}
+@media print{body{background:#fff;color:#000}.noprint{display:none!important}.wrap{max-width:100%;padding:0}.card,.hero{box-shadow:none;border:1px solid #ccc;break-inside:avoid}}
+</style>
+
+</head><body><div style="max-width:560px;margin:0 auto;padding:14px 15px 0"><a href="index.html" style="font:600 13px -apple-system,Arial,sans-serif;color:#0071BC;text-decoration:none">&#8592; Papan DR</a></div><div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Bayer CropScience &middot; Daily Business Activity</div>
+      <h1>Kalkulator Program</h1>
+      <div class="sub">Forecast reward retailer &mdash; "Q3 harus tutup berapa?"</div>
+    </div>
+    <div class="brandmark" title="Bayer"></div>
+  </header>
+
+  <div class="card" style="padding:14px 16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <div class="seg" role="tablist" aria-label="Program">
+        <button id="tR1" role="tab" aria-selected="true">R1 &middot; Retailer 1</button>
+        <button id="tR2" role="tab" aria-selected="false">R2 &middot; Retailer 2</button>
+      </div>
+      <div class="selrow" style="flex:1;min-width:210px">
+        <label class="fl" for="kios">Retailer</label>
+        <select id="kios" aria-label="Pilih retailer"></select>
+      </div>
+    </div>
+    <div class="meta" id="meta"></div>
+  </div>
+
+  <!-- 2. ACH vs TARGET -->
+  <div class="card">
+    <div class="ttl">Ach terhadap Target <span class="r">Ach + FC</span></div>
+    <div class="klbl">Ach Tahunan (YTD + Forecast)</div>
+    <div class="abig num" id="abig">&mdash;</div>
+    <div class="acap"><span id="apct" style="font-weight:700"></span> &middot; target <span id="atgt" class="num"></span></div>
+    <div class="abar"><i class="rl" id="barR" style="width:0"></i><i class="fc" id="barF" style="width:0"></i><span class="tk" id="barTk"></span></div>
+    <div class="aleg">
+      <span><span class="sw" style="background:var(--ablue)"></span>Ach</span>
+      <span><span class="sw" style="background:repeating-linear-gradient(45deg,var(--capri),var(--capri) 3px,transparent 3px,transparent 6px)"></span>FC Q3&ndash;Q4</span>
+      <span><span class="sw" style="width:2px;background:var(--navy)"></span>Target</span>
+    </div>
+    <div class="sgh">Gate Poin <span class="tag">&mdash; per SEMESTER (bukan kuartal)</span></div>
+    <div class="semrow" id="semrow"></div>
+    <div class="sgh">Kontrol per Kuartal <span class="tag">Sem 2 masih berjalan</span></div>
+    <div class="qbars" id="qbars"></div>
+  </div>
+
+  <!-- 3. SIMULASI FORECAST (Q3 | Q4 dipisah jelas) -->
+  <div class="card">
+    <div class="ttl">Simulasi Forecast <span class="r">geser slider</span></div>
+    <div class="sgh" style="border-top:0;padding-top:0;margin:0 0 6px">Q3 <span class="tag">per grup produk</span></div>
+    <div id="q3sliders"></div>
+    <div class="gate" id="q3gate"></div>
+    <div class="sgh">Q4 <span class="tag">total agregat &rarr; Semester 2</span></div>
+    <div class="sl" style="border-top:0;padding-top:2px">
+      <div class="head"><div class="gname">Total poin Q4</div>
+        <div class="vals">target <b class="num" id="q4tgt">&mdash;</b> &middot; FC <b class="num" id="q4val">&mdash;</b> <span id="q4pc" class="num" style="color:var(--ink3)"></span></div></div>
+      <input type="range" id="q4slider" min="0" step="100" value="0" aria-label="Forecast poin Q4">
+    </div>
+  </div>
+
+  <!-- 4. POIN DIKEJAR -->
+  <div class="card">
+    <div class="ttl">Poin yang Dikejar <span class="r">target penjualan</span></div>
+    <div class="klbl">Poin harus ditutup (menuju forecast)</div>
+    <div class="kbig num" id="ptClose">&mdash;</div>
+    <div class="ksub" id="ptBrk"></div>
+    <div class="row tot" style="margin-top:12px"><div class="l"><span id="ptGrandLbl">Poin untuk redemption</span><span class="s" id="ptGrandSub">penjualan + bonus</span></div><div class="r num" id="ptGrand">&mdash;</div></div>
+  </div>
+
+  <!-- 5. RINCIAN REWARD -->
+  <div class="card">
+    <div class="ttl">Rincian Reward</div>
+    <div class="row"><div class="l">Reward Campaign<span class="s" id="campSub"></span></div><div class="r num" id="camptot">&mdash;</div></div>
+    <div class="row" id="rowRedem"><div class="l">Reward Redemption<span class="s" id="redes2"></span></div><div class="r num" id="redtot">&mdash;</div></div>
+    <div class="row tot"><div class="l">Grand Total</div><div class="r num" id="grand2">&mdash;</div></div>
+    <div id="redblock">
+      <div class="sgh" style="border-top:0;padding-top:0;margin-top:15px">Tukar Poin <span class="tag">maks. 3 item &middot; tersedia <b class="num" id="rpts" style="color:var(--ink2)">&mdash;</b> poin</span></div>
+      <div class="redpick noprint">
+        <select id="redpick" aria-label="Pilih reward"></select>
+        <select id="redqty" aria-label="Jumlah"><option value="1">x1</option><option value="2">x2</option></select>
+        <button id="redadd" type="button">Tambah</button>
+      </div>
+      <div class="redcart" id="redcart"></div>
+      <div class="redsum" id="redsum"></div>
+    </div>
+    <div id="r2note" style="display:none;font-size:12px;color:var(--ink3);margin-top:12px;line-height:1.45"></div>
+  </div>
+
+  <!-- 6. PROYEKSI TOTAL REWARD (paling bawah) -->
+  <div class="hero">
+    <div class="lbl">Proyeksi Total Reward (Tahunan)</div>
+    <div class="big num" id="grandrp">&mdash;</div>
+    <div class="cap" id="grandcap"></div>
+  </div>
+
+  <button id="btnpdf" class="pdfbtn noprint" type="button">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+    Simpan sebagai PDF
+  </button>
+  <div class="foot" id="foot"></div>
+</div>
+
+<script>
+const DATA={"qsplit": {"Q1": 0.25, "Q2": 0.3, "Q3": 0.2, "Q4": 0.25}, "R1": {"scheme": "R1", "kios": [{"id": "ID21466", "nama": "TOKO SAPROTAN", "target": {"Q1": 27500, "Q2": 33000, "Q3": 22000, "Q4": 27500}, "ach": {"Q1": {"total": 35499, "A": 20437, "B": 4574, "C": 10488}, "Q2": {"total": 31058, "A": 6190, "B": 1812, "C": 23056}, "Q3": {"total": 3500, "A": 900, "B": 180, "C": 2420}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 55666500, "det": "Cash/Voucher TADA: Rp 55.7jt"}, "q2": {"rp": 5000000, "det": "Tour: Rp 5.0jt"}}}, {"id": "ID18251", "nama": "ALQUDS TANI", "target": {"Q1": 12769, "Q2": 15322, "Q3": 10215, "Q4": 12769}, "ach": {"Q1": {"total": 12400, "A": 5798, "B": 712, "C": 5890}, "Q2": {"total": 20099, "A": 5865, "B": 9534, "C": 4700}, "Q3": {"total": 9838, "A": 8058, "B": 1280, "C": 500}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 15207000, "det": "Cash/Voucher TADA: Rp 15.2jt"}, "q2": {"rp": 0, "det": ""}}}, {"id": "ID19937", "nama": "CV MITRA JAYA ABADI", "target": {"Q1": 11352, "Q2": 13622, "Q3": 9081, "Q4": 11352}, "ach": {"Q1": {"total": 15957, "A": 9177, "B": 0, "C": 6780}, "Q2": {"total": 20124, "A": 13146, "B": 1650, "C": 5328}, "Q3": {"total": 2430, "A": 450, "B": 1720, "C": 260}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 22942500, "det": "Cash/Voucher TADA: Rp 22.9jt"}, "q2": {"rp": 0, "det": ""}}}, {"id": "ID18681", "nama": "PT HIBRIDA JAYA UTAMA", "target": {"Q1": 14500, "Q2": 17400, "Q3": 11600, "Q4": 14500}, "ach": {"Q1": {"total": 9885, "A": 7185, "B": 0, "C": 2700}, "Q2": {"total": 25415, "A": 14395, "B": 5220, "C": 5800}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 16166250, "det": "Cash/Voucher TADA: Rp 16.2jt"}, "q2": {"rp": 2000000, "det": "Tour: Rp 2.0jt"}}}, {"id": "ID30438", "nama": "BAROKAH", "target": {"Q1": 1500, "Q2": 1800, "Q3": 1200, "Q4": 1500}, "ach": {"Q1": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q2": {"total": 20234, "A": 720, "B": 16024, "C": 3490}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 6831250, "det": "Cash/Voucher TADA: Rp 6.8jt"}, "q2": {"rp": 1000000, "det": "Tour: Rp 1.0jt"}}}, {"id": "ID21462", "nama": "CV MITRA AGRO LESTARI", "target": {"Q1": 7154, "Q2": 8585, "Q3": 5723, "Q4": 7154}, "ach": {"Q1": {"total": 2950, "A": 1350, "B": 0, "C": 1600}, "Q2": {"total": 14368, "A": 3780, "B": 4270, "C": 6318}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 1350000, "det": "Cash/Voucher TADA: Rp 1.4jt"}, "q2": {"rp": 2000000, "det": "Tour: Rp 2.0jt"}}}, {"id": "ID18777", "nama": "CV BUNGA ARUM", "target": {"Q1": 4028, "Q2": 4834, "Q3": 3223, "Q4": 4028}, "ach": {"Q1": {"total": 5730, "A": 1720, "B": 320, "C": 3690}, "Q2": {"total": 10006, "A": 7446, "B": 2560, "C": 0}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 3760000, "det": "Cash/Voucher TADA: Rp 3.8jt"}, "q2": {"rp": 0, "det": ""}}}, {"id": "ID18332", "nama": "MITRA TANI", "target": {"Q1": 1753, "Q2": 2103, "Q3": 1402, "Q4": 1753}, "ach": {"Q1": {"total": 1520, "A": 1130, "B": 180, "C": 210}, "Q2": {"total": 10042, "A": 5528, "B": 1690, "C": 2824}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 2300000, "det": "Cash/Voucher TADA: Rp 2.3jt"}, "q2": {"rp": 0, "det": ""}}}, {"id": "ID25227", "nama": "BAROKAH TANI", "target": {"Q1": 5145, "Q2": 6174, "Q3": 4116, "Q4": 5145}, "ach": {"Q1": {"total": 6005, "A": 2805, "B": 520, "C": 2680}, "Q2": {"total": 3220, "A": 300, "B": 400, "C": 2520}, "Q3": {"total": 310, "A": 180, "B": 130, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 6831250, "det": "Cash/Voucher TADA: Rp 6.8jt"}, "q2": {"rp": 0, "det": ""}}}, {"id": "7333819", "nama": "ANUGRAH SUMBER TANI", "target": {"Q1": 1250, "Q2": 1500, "Q3": 1000, "Q4": 1250}, "ach": {"Q1": {"total": 5796, "A": 3688, "B": 1350, "C": 758}, "Q2": {"total": 2603, "A": 980, "B": 1223, "C": 400}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 8726000, "det": "Cash/Voucher TADA: Rp 8.7jt"}, "q2": {"rp": 1952250, "det": "Cash Back: Rp 2.0jt"}}}, {"id": "ID05697", "nama": "SANTOSO", "target": {"Q1": 442, "Q2": 530, "Q3": 354, "Q4": 442}, "ach": {"Q1": {"total": 3790, "A": 860, "B": 1740, "C": 1190}, "Q2": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 3460000, "det": "Cash/Voucher TADA: Rp 3.5jt"}, "q2": {"rp": 0, "det": ""}}}, {"id": "ID21570", "nama": "TANI JAYA", "target": {"Q1": 1137, "Q2": 1364, "Q3": 909, "Q4": 1137}, "ach": {"Q1": {"total": 2092, "A": 662, "B": 920, "C": 510}, "Q2": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 2244000, "det": "Cash/Voucher TADA: Rp 2.2jt"}, "q2": {"rp": 0, "det": ""}}}], "q3": {"min_pct": 90, "per": 1, "tiers": [{"min": 1500, "rate": {"A": 750, "B": 500, "C": 250}}, {"min": 6000, "rate": {"A": 1000, "B": 750, "C": 250}}, {"min": 12000, "rate": {"A": 1250, "B": 1000, "C": 250}}]}, "redeem": [[6000, 10000000], [12000, 20000000], [22000, 38000000], [36000, 65000000], [48000, 88000000], [65000, 120000000], [80000, 148000000], [100000, 185000000], [150000, 280000000], [200000, 380000000], [275000, 525000000], [350000, 675000000], [500000, 1000000000]], "mult": {"A": 0.3125, "B": 0.25, "C": 0.0625}, "groupsplit": {"A": 0.3, "B": 0.4, "C": 0.3}}, "R2": {"scheme": "R2", "kios": [{"id": "7772373", "nama": "BAROKAH", "target": {"Q1": 112625, "Q2": 135150, "Q3": 90100, "Q4": 112625}, "ach": {"Q1": {"total": 190600, "A": 149800, "B": 10800, "C": 30000}, "Q2": {"total": 2013300, "A": 61500, "B": 1602400, "C": 349400}, "Q3": {"total": 538800, "A": 8000, "B": 202000, "C": 328800}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 20000000, "det": "Cash Back: Rp 20.0jt"}, "q2": {"rp": 121458000, "det": "Tour: Rp 120.0jt; Cash Back: Rp 1.5jt"}}}, {"id": "7990575", "nama": "MITRA NAURA", "target": {"Q1": 547528, "Q2": 657033, "Q3": 438022, "Q4": 547528}, "ach": {"Q1": {"total": 1292600, "A": 687600, "B": 0, "C": 605000}, "Q2": {"total": 656200, "A": 501000, "B": 55000, "C": 100200}, "Q3": {"total": 531800, "A": 340800, "B": 188000, "C": 3000}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 20000000, "det": "Cash Back: Rp 20.0jt"}, "q2": {"rp": 30139500, "det": "Tour: Rp 30.0jt; Cash Back: Rp 140rb"}}}, {"id": "7431714", "nama": "Hijau Daun", "target": {"Q1": 321768, "Q2": 386121, "Q3": 257414, "Q4": 321768}, "ach": {"Q1": {"total": 856200, "A": 147000, "B": 303000, "C": 406200}, "Q2": {"total": 1472000, "A": 537600, "B": 534000, "C": 400400}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 8910000, "det": "Cash Back: Rp 8.9jt"}, "q2": {"rp": 63870000, "det": "Tour: Rp 60.0jt; Cash Back: Rp 3.9jt"}}}, {"id": "7836374", "nama": "SANTOSO WIDODO", "target": {"Q1": 212585, "Q2": 255102, "Q3": 170068, "Q4": 212585}, "ach": {"Q1": {"total": 1065000, "A": 510300, "B": 481500, "C": 73200}, "Q2": {"total": 883200, "A": 271750, "B": 498650, "C": 112800}, "Q3": {"total": 94200, "A": 49800, "B": 44400, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 16901000, "det": "Cash Back: Rp 16.9jt"}, "q2": {"rp": 35247000, "det": "Tour: Rp 30.0jt; Cash Back: Rp 5.2jt"}}}, {"id": "7772399", "nama": "SYIFA AGRO", "target": {"Q1": 499758, "Q2": 599709, "Q3": 399806, "Q4": 499758}, "ach": {"Q1": {"total": 13400, "A": 0, "B": 6400, "C": 7000}, "Q2": {"total": 1303300, "A": 441900, "B": 507400, "C": 354000}, "Q3": {"total": 532300, "A": 389300, "B": 93000, "C": 50000}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 64000, "det": "Cash Back: Rp 64rb"}, "q2": {"rp": 60074250, "det": "Tour: Rp 60.0jt; Cash Back: Rp 74rb"}}}, {"id": "7772400", "nama": "SYOFA AGRO", "target": {"Q1": 501798, "Q2": 602157, "Q3": 401438, "Q4": 501798}, "ach": {"Q1": {"total": 1000850, "A": 478600, "B": 71250, "C": 451000}, "Q2": {"total": 665000, "A": 26000, "B": 446000, "C": 193000}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 19358000, "det": "Cash Back: Rp 19.4jt"}, "q2": {"rp": 30337500, "det": "Tour: Rp 30.0jt; Cash Back: Rp 338rb"}}}, {"id": "7772375", "nama": "KURNIA TANI", "target": {"Q1": 185425, "Q2": 222510, "Q3": 148340, "Q4": 185425}, "ach": {"Q1": {"total": 75200, "A": 62200, "B": 4000, "C": 9000}, "Q2": {"total": 1328000, "A": 433000, "B": 402000, "C": 493000}, "Q3": {"total": 45000, "A": 0, "B": 45000, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 2061500, "det": "Cash Back: Rp 2.1jt"}, "q2": {"rp": 60630000, "det": "Tour: Rp 60.0jt; Cash Back: Rp 630rb"}}}, {"id": "7063006", "nama": "BUNGA TANI", "target": {"Q1": 488580, "Q2": 586296, "Q3": 390864, "Q4": 488580}, "ach": {"Q1": {"total": 572800, "A": 171800, "B": 32000, "C": 369000}, "Q2": {"total": 660000, "A": 540000, "B": 120000, "C": 0}, "Q3": {"total": 204000, "A": 204000, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 7192000, "det": "Cash Back: Rp 7.2jt"}, "q2": {"rp": 30225000, "det": "Tour: Rp 30.0jt; Cash Back: Rp 225rb"}}}, {"id": "7333815", "nama": "BINTANG TANI", "target": {"Q1": 320896, "Q2": 385076, "Q3": 256717, "Q4": 320896}, "ach": {"Q1": {"total": 625700, "A": 616100, "B": 9600, "C": 0}, "Q2": {"total": 651800, "A": 465000, "B": 60000, "C": 126800}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 20000000, "det": "Cash Back: Rp 20.0jt"}, "q2": {"rp": 30040500, "det": "Tour: Rp 30.0jt; Cash Back: Rp 40rb"}}}, {"id": "7073442", "nama": "AGRO MULYA", "target": {"Q1": 162525, "Q2": 195030, "Q3": 130020, "Q4": 162525}, "ach": {"Q1": {"total": 213000, "A": 138000, "B": 30000, "C": 45000}, "Q2": {"total": 1027000, "A": 577800, "B": 169000, "C": 280200}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 5400000, "det": "Cash Back: Rp 5.4jt"}, "q2": {"rp": 38482500, "det": "Tour: Rp 30.0jt; Cash Back: Rp 8.5jt"}}}, {"id": "7334519", "nama": "Barokah Tani Ngaringan", "target": {"Q1": 25000, "Q2": 30000, "Q3": 20000, "Q4": 25000}, "ach": {"Q1": {"total": 574200, "A": 366400, "B": 129000, "C": 78800}, "Q2": {"total": 651500, "A": 293000, "B": 185300, "C": 173200}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 15856000, "det": "Cash Back: Rp 15.9jt"}, "q2": {"rp": 30033750, "det": "Tour: Rp 30.0jt; Cash Back: Rp 34rb"}}}, {"id": "73347620", "nama": "HIBRIDA AGRO SEJAHTERA", "target": {"Q1": 62500, "Q2": 75000, "Q3": 50000, "Q4": 62500}, "ach": {"Q1": {"total": 250200, "A": 96600, "B": 0, "C": 153600}, "Q2": {"total": 650700, "A": 378500, "B": 137000, "C": 135200}, "Q3": {"total": 148500, "A": 40500, "B": 93000, "C": 15000}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 3864000, "det": "Cash Back: Rp 3.9jt"}, "q2": {"rp": 30015750, "det": "Tour: Rp 30.0jt; Cash Back: Rp 16rb"}}}, {"id": "7772380", "nama": "RAHMA TANI", "target": {"Q1": 175575, "Q2": 210690, "Q3": 140460, "Q4": 175575}, "ach": {"Q1": {"total": 609700, "A": 351900, "B": 236000, "C": 21800}, "Q2": {"total": 390800, "A": 134800, "B": 256000, "C": 0}, "Q3": {"total": 41000, "A": 23000, "B": 0, "C": 18000}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 15107000, "det": "Cash Back: Rp 15.1jt"}, "q2": {"rp": 8793000, "det": "Cash Back: Rp 8.8jt"}}}, {"id": "7304981", "nama": "NUGROHO TANI", "target": {"Q1": 193800, "Q2": 232560, "Q3": 155040, "Q4": 193800}, "ach": {"Q1": {"total": 200050, "A": 141050, "B": 59000, "C": 0}, "Q2": {"total": 672900, "A": 233800, "B": 160100, "C": 279000}, "Q3": {"total": 37400, "A": 35000, "B": 2400, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 6232000, "det": "Cash Back: Rp 6.2jt"}, "q2": {"rp": 30515250, "det": "Tour: Rp 30.0jt; Cash Back: Rp 515rb"}}}, {"id": "7105053", "nama": "Wijaya Sari", "target": {"Q1": 219450, "Q2": 263340, "Q3": 175560, "Q4": 219450}, "ach": {"Q1": {"total": 217300, "A": 64700, "B": 146600, "C": 6000}, "Q2": {"total": 654200, "A": 118400, "B": 185000, "C": 350800}, "Q3": {"total": 1800, "A": 0, "B": 1800, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 4054000, "det": "Cash Back: Rp 4.1jt"}, "q2": {"rp": 30094500, "det": "Tour: Rp 30.0jt; Cash Back: Rp 94rb"}}}, {"id": "7421973", "nama": "MITRA TANI SEJAHTERA", "target": {"Q1": 419858, "Q2": 503829, "Q3": 335886, "Q4": 419858}, "ach": {"Q1": {"total": 603200, "A": 252000, "B": 52000, "C": 299200}, "Q2": {"total": 288800, "A": 30000, "B": 40000, "C": 218800}, "Q3": {"total": 31000, "A": 18000, "B": 13000, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 10600000, "det": "Cash Back: Rp 10.6jt"}, "q2": {"rp": 0, "det": ""}}}, {"id": "7705694", "nama": "FAIZ TANI MART", "target": {"Q1": 86725, "Q2": 104070, "Q3": 69380, "Q4": 86725}, "ach": {"Q1": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q2": {"total": 683200, "A": 218600, "B": 338000, "C": 126600}, "Q3": {"total": 6400, "A": 2400, "B": 4000, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 0, "det": ""}, "q2": {"rp": 30747000, "det": "Tour: Rp 30.0jt; Cash Back: Rp 747rb"}}}, {"id": "7333818", "nama": "WDEE TANI", "target": {"Q1": 33275, "Q2": 39930, "Q3": 26620, "Q4": 33275}, "ach": {"Q1": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q2": {"total": 650000, "A": 123600, "B": 79000, "C": 447400}, "Q3": {"total": 32000, "A": 0, "B": 32000, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 0, "det": ""}, "q2": {"rp": 30000000, "det": "Tour: Rp 30.0jt"}}}, {"id": "7772391", "nama": "HISYAM AGRO", "target": {"Q1": 112775, "Q2": 135330, "Q3": 90220, "Q4": 112775}, "ach": {"Q1": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q2": {"total": 652500, "A": 609500, "B": 43000, "C": 0}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 0, "det": ""}, "q2": {"rp": 30056250, "det": "Tour: Rp 30.0jt; Cash Back: Rp 56rb"}}}, {"id": "73347622", "nama": "UD Tani Jaya", "target": {"Q1": 12500, "Q2": 15000, "Q3": 10000, "Q4": 12500}, "ach": {"Q1": {"total": 435400, "A": 208000, "B": 0, "C": 227400}, "Q2": {"total": 90000, "A": 0, "B": 90000, "C": 0}, "Q3": {"total": 23000, "A": 0, "B": 0, "C": 23000}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 8320000, "det": "Cash Back: Rp 8.3jt"}, "q2": {"rp": 2025000, "det": "Cash Back: Rp 2.0jt"}}}, {"id": "7772383", "nama": "SEDULUR TANI", "target": {"Q1": 219575, "Q2": 263490, "Q3": 175660, "Q4": 219575}, "ach": {"Q1": {"total": 289000, "A": 289000, "B": 0, "C": 0}, "Q2": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 11560000, "det": "Cash Back: Rp 11.6jt"}, "q2": {"rp": 0, "det": ""}}}, {"id": "7267779", "nama": "CINDO TANI", "target": {"Q1": 59100, "Q2": 70920, "Q3": 47280, "Q4": 59100}, "ach": {"Q1": {"total": 270400, "A": 160600, "B": 4000, "C": 105800}, "Q2": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 6464000, "det": "Cash Back: Rp 6.5jt"}, "q2": {"rp": 0, "det": ""}}}, {"id": "7554001", "nama": "Syukur Tani", "target": {"Q1": 162763, "Q2": 195315, "Q3": 130210, "Q4": 162763}, "ach": {"Q1": {"total": 99000, "A": 99000, "B": 0, "C": 0}, "Q2": {"total": 127500, "A": 127500, "B": 0, "C": 0}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 990000, "det": "Cash Back: Rp 990rb"}, "q2": {"rp": 0, "det": ""}}}, {"id": "73347621", "nama": "Faeyza tani", "target": {"Q1": 25000, "Q2": 30000, "Q3": 20000, "Q4": 25000}, "ach": {"Q1": {"total": 204200, "A": 0, "B": 0, "C": 204200}, "Q2": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 0, "det": ""}, "q2": {"rp": 0, "det": ""}}}, {"id": "7555555", "nama": "ADI PUTRA", "target": {"Q1": 33350, "Q2": 40020, "Q3": 26680, "Q4": 33350}, "ach": {"Q1": {"total": 200000, "A": 200000, "B": 0, "C": 0}, "Q2": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 8000000, "det": "Cash Back: Rp 8.0jt"}, "q2": {"rp": 0, "det": ""}}}, {"id": "7333816", "nama": "SARANA TANI", "target": {"Q1": 75400, "Q2": 90480, "Q3": 60320, "Q4": 75400}, "ach": {"Q1": {"total": 16600, "A": 14600, "B": 0, "C": 2000}, "Q2": {"total": 166800, "A": 48800, "B": 36000, "C": 82000}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 438000, "det": "Cash Back: Rp 438rb"}, "q2": {"rp": 3753000, "det": "Cash Back: Rp 3.8jt"}}}, {"id": "7772372", "nama": "ABDI TANI", "target": {"Q1": 10375, "Q2": 12450, "Q3": 8300, "Q4": 10375}, "ach": {"Q1": {"total": 171600, "A": 69000, "B": 53600, "C": 49000}, "Q2": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 2951000, "det": "Cash Back: Rp 3.0jt"}, "q2": {"rp": 0, "det": ""}}}, {"id": "7772381", "nama": "RAJA TANI", "target": {"Q1": 62375, "Q2": 74850, "Q3": 49900, "Q4": 62375}, "ach": {"Q1": {"total": 109900, "A": 87100, "B": 0, "C": 22800}, "Q2": {"total": 48600, "A": 29400, "B": 18000, "C": 1200}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 3048500, "det": "Cash Back: Rp 3.0jt"}, "q2": {"rp": 1093500, "det": "Cash Back: Rp 1.1jt"}}}, {"id": "7334618", "nama": "BUMI AGRO", "target": {"Q1": 25000, "Q2": 30000, "Q3": 20000, "Q4": 25000}, "ach": {"Q1": {"total": 152800, "A": 98800, "B": 0, "C": 54000}, "Q2": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 3458000, "det": "Cash Back: Rp 3.5jt"}, "q2": {"rp": 0, "det": ""}}}, {"id": "7334548", "nama": "ANUGRAH TANI", "target": {"Q1": 32750, "Q2": 39300, "Q3": 26200, "Q4": 32750}, "ach": {"Q1": {"total": 131200, "A": 90600, "B": 8000, "C": 32600}, "Q2": {"total": 8000, "A": 0, "B": 0, "C": 8000}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 3251000, "det": "Cash Back: Rp 3.3jt"}, "q2": {"rp": 180000, "det": "Cash Back: Rp 180rb"}}}, {"id": "7872629", "nama": "Tani Sukses", "target": {"Q1": 260419, "Q2": 312503, "Q3": 208335, "Q4": 260419}, "ach": {"Q1": {"total": 123400, "A": 117000, "B": 4000, "C": 2400}, "Q2": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 4135000, "det": "Cash Back: Rp 4.1jt"}, "q2": {"rp": 0, "det": ""}}}, {"id": "7612486", "nama": "AMANDA TANI", "target": {"Q1": 82675, "Q2": 99210, "Q3": 66140, "Q4": 82675}, "ach": {"Q1": {"total": 77400, "A": 19000, "B": 7400, "C": 51000}, "Q2": {"total": 44600, "A": 2000, "B": 16000, "C": 26600}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 624000, "det": "Cash Back: Rp 624rb"}, "q2": {"rp": 0, "det": ""}}}, {"id": "7506955", "nama": "ISTANA TANI", "target": {"Q1": 25000, "Q2": 30000, "Q3": 20000, "Q4": 25000}, "ach": {"Q1": {"total": 102000, "A": 84000, "B": 0, "C": 18000}, "Q2": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 2940000, "det": "Cash Back: Rp 2.9jt"}, "q2": {"rp": 0, "det": ""}}}, {"id": "7041649", "nama": "SARI TANI SEJAHTERA", "target": {"Q1": 12750, "Q2": 15300, "Q3": 10200, "Q4": 12750}, "ach": {"Q1": {"total": 90200, "A": 64000, "B": 26200, "C": 0}, "Q2": {"total": 6000, "A": 6000, "B": 0, "C": 0}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 2342000, "det": "Cash Back: Rp 2.3jt"}, "q2": {"rp": 135000, "det": "Cash Back: Rp 135rb"}}}, {"id": "7830135", "nama": "SIDO LUHUR", "target": {"Q1": 205575, "Q2": 246690, "Q3": 164460, "Q4": 205575}, "ach": {"Q1": {"total": 70000, "A": 35400, "B": 16000, "C": 18600}, "Q2": {"total": 22200, "A": 15000, "B": 0, "C": 7200}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 1202500, "det": "Cash Back: Rp 1.2jt"}, "q2": {"rp": 0, "det": ""}}}, {"id": "7685961", "nama": "Aulya Tani", "target": {"Q1": 69000, "Q2": 82800, "Q3": 55200, "Q4": 69000}, "ach": {"Q1": {"total": 73400, "A": 71000, "B": 0, "C": 2400}, "Q2": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q3": {"total": 1200, "A": 0, "B": 1200, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 2307500, "det": "Cash Back: Rp 2.3jt"}, "q2": {"rp": 0, "det": ""}}}, {"id": "7421973", "nama": "MITRA TANI SEJAHTERA ", "target": {"Q1": 419858, "Q2": 503829, "Q3": 335886, "Q4": 419858}, "ach": {"Q1": {"total": 603200, "A": 252000, "B": 52000, "C": 299200}, "Q2": {"total": 288800, "A": 30000, "B": 40000, "C": 218800}, "Q3": {"total": 31000, "A": 18000, "B": 13000, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 10600000, "det": "Cash Back: Rp 10.6jt"}, "q2": {"rp": 0, "det": ""}}}, {"id": "7468229", "nama": "MUSTIKA TANI", "target": {"Q1": 258899, "Q2": 310679, "Q3": 207120, "Q4": 258899}, "ach": {"Q1": {"total": 45500, "A": 32500, "B": 0, "C": 13000}, "Q2": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 1056250, "det": "Cash Back: Rp 1.1jt"}, "q2": {"rp": 0, "det": ""}}}, {"id": "7334317", "nama": "UD. LESTARI UTOMO", "target": {"Q1": 200363, "Q2": 240435, "Q3": 160290, "Q4": 200363}, "ach": {"Q1": {"total": 31600, "A": 9000, "B": 0, "C": 22600}, "Q2": {"total": 9400, "A": 2400, "B": 0, "C": 7000}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 292500, "det": "Cash Back: Rp 292rb"}, "q2": {"rp": 0, "det": ""}}}, {"id": "7772387", "nama": "AJI JAYA", "target": {"Q1": 15800, "Q2": 18960, "Q3": 12640, "Q4": 15800}, "ach": {"Q1": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q2": {"total": 32900, "A": 29900, "B": 0, "C": 3000}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 0, "det": ""}, "q2": {"rp": 0, "det": ""}}}, {"id": "7594906", "nama": "SUMBER SARI", "target": {"Q1": 355608, "Q2": 426730, "Q3": 284487, "Q4": 355608}, "ach": {"Q1": {"total": 3400, "A": 0, "B": 3400, "C": 0}, "Q2": {"total": 26600, "A": 18200, "B": 4400, "C": 4000}, "Q3": {"total": 2400, "A": 2400, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 0, "det": ""}, "q2": {"rp": 0, "det": ""}}}, {"id": "7626585", "nama": "TOKO DUA-DUA", "target": {"Q1": 4675, "Q2": 5610, "Q3": 3740, "Q4": 4675}, "ach": {"Q1": {"total": 30800, "A": 9400, "B": 15400, "C": 6000}, "Q2": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 302000, "det": "Cash Back: Rp 302rb"}, "q2": {"rp": 0, "det": ""}}}, {"id": "7772402", "nama": "TANI JAYA 2", "target": {"Q1": 87975, "Q2": 105570, "Q3": 70380, "Q4": 87975}, "ach": {"Q1": {"total": 26700, "A": 19900, "B": 6800, "C": 0}, "Q2": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 714750, "det": "Cash Back: Rp 715rb"}, "q2": {"rp": 0, "det": ""}}}, {"id": "7863945", "nama": "Marisa", "target": {"Q1": 6350, "Q2": 7620, "Q3": 5080, "Q4": 6350}, "ach": {"Q1": {"total": 25500, "A": 25500, "B": 0, "C": 0}, "Q2": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 828750, "det": "Cash Back: Rp 829rb"}, "q2": {"rp": 0, "det": ""}}}, {"id": "7772388", "nama": "BINTORO LOH JINAWI", "target": {"Q1": 37650, "Q2": 45180, "Q3": 30120, "Q4": 37650}, "ach": {"Q1": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q2": {"total": 23400, "A": 11800, "B": 0, "C": 11600}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 0, "det": ""}, "q2": {"rp": 0, "det": ""}}}, {"id": "7209641", "nama": "Margo Tani", "target": {"Q1": 106300, "Q2": 127560, "Q3": 85040, "Q4": 106300}, "ach": {"Q1": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q2": {"total": 21400, "A": 0, "B": 21400, "C": 0}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 0, "det": ""}, "q2": {"rp": 0, "det": ""}}}, {"id": "7798819", "nama": "MAHKOTA TANI", "target": {"Q1": 2300, "Q2": 2760, "Q3": 1840, "Q4": 2300}, "ach": {"Q1": {"total": 20400, "A": 20400, "B": 0, "C": 0}, "Q2": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 612000, "det": "Cash Back: Rp 612rb"}, "q2": {"rp": 0, "det": ""}}}, {"id": "7960818", "nama": "WIJAYA TANI", "target": {"Q1": 13900, "Q2": 16680, "Q3": 11120, "Q4": 13900}, "ach": {"Q1": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q2": {"total": 13600, "A": 0, "B": 13600, "C": 0}, "Q3": {"total": 6000, "A": 6000, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 0, "det": ""}, "q2": {"rp": 0, "det": ""}}}, {"id": "7333823", "nama": "TANI MAKMUR", "target": {"Q1": 6400, "Q2": 7680, "Q3": 5120, "Q4": 6400}, "ach": {"Q1": {"total": 11200, "A": 0, "B": 10200, "C": 1000}, "Q2": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q3": {"total": 6800, "A": 0, "B": 6800, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 102000, "det": "Cash Back: Rp 102rb"}, "q2": {"rp": 0, "det": ""}}}, {"id": "7772379", "nama": "PERMATA TANI", "target": {"Q1": 550, "Q2": 660, "Q3": 440, "Q4": 550}, "ach": {"Q1": {"total": 3200, "A": 3200, "B": 0, "C": 0}, "Q2": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q3": {"total": 0, "A": 0, "B": 0, "C": 0}, "Q4": {"total": 0, "A": 0, "B": 0, "C": 0}}, "realized": {"q1": {"rp": 0, "det": ""}, "q2": {"rp": 0, "det": ""}}}], "q3": {"min_pct": 90, "per": 0.01, "tiers": [{"min": 5000, "rate": {"A": 1500, "B": 750, "C": 250}}, {"min": 100000, "rate": {"A": 1750, "B": 1000, "C": 250}}, {"min": 250000, "rate": {"A": 2000, "B": 1250, "C": 250}}]}, "redeem": [], "mult": {"A": 0, "B": 0, "C": 0}, "groupsplit": {"A": 0.3, "B": 0.4, "C": 0.3}}};
+const {qsplit}=DATA;
+const ABC=['A','B','C'], QS=['Q1','Q2','Q3','Q4'];
+const MAXITEM=3;
+let SC,mult,groupsplit,redeem,Q3CFG,scheme,k;
+function setScheme(s){SC=DATA[s];scheme=s;mult=SC.mult;groupsplit=SC.groupsplit;redeem=SC.redeem||[];Q3CFG=SC.q3;k=SC.kios[0];}
+setScheme('R1');
+let proj={Q3:{A:0,B:0,C:0},Q4:0};
+let cart={};
+
+const fmtP=v=>Math.round(v).toLocaleString('id-ID');
+function fmtRp(v){v=Math.round(v);
+  if(v>=1e9)return 'Rp '+(v/1e9).toLocaleString('id-ID',{maximumFractionDigits:2})+' M';
+  if(v>=1e6)return 'Rp '+(v/1e6).toLocaleString('id-ID',{maximumFractionDigits:1})+' jt';
+  if(v>=1e3)return 'Rp '+(v/1e3).toLocaleString('id-ID',{maximumFractionDigits:0})+' rb';
+  return 'Rp '+v.toLocaleString('id-ID');}
+const pct=x=>(x*100).toFixed(0)+'%';
+const annualTgt=()=>QS.reduce((s,q)=>s+k.target[q],0);
+const threshold=()=>annualTgt()>50000?1.05:1.10;
+const realizedFY=()=>QS.reduce((s,q)=>s+k.ach[q].total,0);
+const cartItems=()=>Object.values(cart).reduce((s,q)=>s+q,0);
+const cartCost=()=>Object.entries(cart).reduce((s,e)=>s+redeem[e[0]][0]*e[1],0);
+const cartValue=()=>Object.entries(cart).reduce((s,e)=>s+redeem[e[0]][1]*e[1],0);
+
+function groupsOf(q){
+  if(q==='Q1'||q==='Q2')return {A:k.ach[q].A,B:k.ach[q].B,C:k.ach[q].C,total:k.ach[q].total};
+  if(q==='Q3')return {A:proj.Q3.A,B:proj.Q3.B,C:proj.Q3.C,total:proj.Q3.A+proj.Q3.B+proj.Q3.C};
+  const t=proj.Q4;return {A:t*groupsplit.A,B:t*groupsplit.B,C:t*groupsplit.C,total:t};
+}
+// SKEMA TAHUNAN: split grup 30/40/30 dari TOTAL kuartal (sesuai Excel), BUKAN komposisi aktual.
+// (Q3 campaign tetap pakai grup aktual di q3campaign &mdash; itu beda skema.) Terverifikasi vs Excel I44.
+function qbonus(q){const g=groupsOf(q),tgt=k.target[q],p=tgt?g.total/tgt:0,pass=p>=1;
+  let b=0;for(const x of ABC)b+=pass?g.total*groupsplit[x]*mult[x]:0;return {g,tgt,pct:p,pass,bonus:b};}
+function semester(qs){const gs=qs.map(groupsOf),tgt=qs.reduce((s,q)=>s+k.target[q],0),tot=gs.reduce((s,x)=>s+x.total,0),p=tgt?tot/tgt:0,pass=p>=1;
+  let sem=0;for(const x of ABC)sem+=pass?tot*groupsplit[x]*mult[x]:0;
+  const qsum=qs.reduce((s,q)=>s+qbonus(q).bonus,0);return {tgt,tot,pct:p,pass,max:Math.max(sem,qsum)};}
+function q3campaign(){const g=groupsOf('Q3'),tgt=k.target.Q3,gateT=tgt*Q3CFG.min_pct/100,open=g.total>=gateT;
+  if(!open)return {open,gateT,need:gateT-g.total,reward:0};
+  let tier=null;for(const t of Q3CFG.tiers)if(g.total>=t.min)tier=t;
+  let rw=0;if(tier)for(const x of ABC)rw+=g[x]*tier.rate[x]*Q3CFG.per;
+  return {open,gateT,need:0,reward:rw};}
+function compute(){
+  const H1=semester(['Q1','Q2']),H2=semester(['Q3','Q4']);
+  const fyt=annualTgt(), fya=QS.reduce((s,q)=>s+groupsOf(q).total,0), fyp=fyt?fya/fyt:0, q3c=q3campaign();
+  const campTot=k.realized.q1.rp+k.realized.q2.rp+q3c.reward;
+  // R2: poin single-pool (tanpa multiplier/bonus), reward = campaign cash back. Tanpa redemption tahunan.
+  if(scheme==='R2') return {H1,H2,semPts:0,fya,fyp,fyt,grandPts:fya,q3c,campTot,cost:0,short:0,redRp:0,grand:campTot};
+  const th=threshold(), semPts=H1.max+H2.max;
+  const fyBonus=fyp<1?0:(fyp<th?fya*0.25:fya*0.50);
+  const grandPts=fyBonus+semPts+fya, cost=cartCost();
+  return {H1,H2,semPts,fya,fyp,fyt,grandPts,q3c,campTot,cost,short:Math.max(0,cost-grandPts),redRp:cartValue(),grand:campTot+cartValue()};
+}
+
+function renderStatic(){
+  const at=annualTgt(),catv=at>50000?'&ge; 50.000':'0&ndash;49.999';
+  document.getElementById('meta').innerHTML=
+    '<div class="kv"><span class="k">ID Retailer</span><span class="v num">'+k.id+'</span></div>'+
+    '<div class="kv"><span class="k">Target 2026</span><span class="v num">'+fmtP(at)+'</span></div>'+
+    '<div class="kv"><span class="k">Kategori</span><span class="v">'+catv+' <span style="font-weight:600;color:var(--ink3);font-size:12px">&middot; growth '+(threshold()===1.05?'105%':'110%')+'</span></span></div>';
+  const smax=Math.max(k.target.Q3, k.ach.Q3.total*2, 15000);
+  let s='';for(const g of ABC)s+=
+    '<div class="sl"><div class="head"><div class="gname"><span class="dot" style="background:'+({A:'var(--navy)',B:'var(--ablue)',C:'var(--capri)'})[g]+'"></span>Grup '+g+'</div>'+
+    '<div class="vals">Ach <b class="num">'+fmtP(k.ach.Q3[g])+'</b> &rarr; FC <b class="num" id="q3v'+g+'">'+fmtP(proj.Q3[g])+'</b></div></div>'+
+    '<input type="range" min="0" max="'+Math.round(smax)+'" step="50" value="'+proj.Q3[g]+'" data-q3="'+g+'" aria-label="Forecast Q3 '+g+'"></div>';
+  document.getElementById('q3sliders').innerHTML=s;
+  const q4max=Math.round(Math.max(k.target.Q4*1.5,10000));
+  const q4s=document.getElementById('q4slider');q4s.max=q4max;q4s.value=proj.Q4;
+  document.getElementById('q4tgt').textContent=fmtP(k.target.Q4);
+  document.getElementById('foot').innerHTML='Data nyata '+k.nama+' (BRP s.d. Jul 2026 &middot; program '+scheme+'). Q3/Q4 = forecast, bukan final. '+(scheme==='R2'?'R2: reward cash back per poin (campaign), tanpa skema tahunan/redemption.':'Skema tahunan pakai split grup 30/40/30 (sesuai Excel, terverifikasi).');
+  document.querySelectorAll('[data-q3]').forEach(inp=>inp.oninput=()=>{proj.Q3[inp.dataset.q3]=+inp.value;document.getElementById('q3v'+inp.dataset.q3).textContent=fmtP(+inp.value);update();});
+  q4s.oninput=()=>{proj.Q4=+q4s.value;update();};
+}
+
+function update(){
+  const c=compute();
+  // gate campaign Q3
+  const gb=document.getElementById('q3gate'), g3=groupsOf('Q3');
+  gb.className='gate '+(c.q3c.open?'open':'shut');
+  gb.innerHTML='<span>Gate 90% Q3 '+(c.q3c.open?'<b>terbuka</b>':'belum')+' &middot; Ach '+fmtP(g3.total)+' / target '+fmtP(k.target.Q3)+' ('+pct(k.target.Q3?g3.total/k.target.Q3:0)+') &middot; reward '+fmtRp(c.q3c.reward)+'</span>';
+  // poin dikejar
+  const real=realizedFY(), toClose=Math.max(0,c.fya-real);
+  const q3close=Math.max(0,g3.total-k.ach.Q3.total), q4close=Math.max(0,proj.Q4-k.ach.Q4.total);
+  document.getElementById('ptClose').innerHTML=toClose>0?fmtP(toClose)+' <small>poin</small>':'Sesuai Ach';
+  document.getElementById('ptClose').style.color=toClose>0?'var(--ablue)':'var(--ink3)';
+  document.getElementById('ptBrk').innerHTML=toClose>0?'Q3 +'+fmtP(q3close)+' poin &middot; Q4 +'+fmtP(q4close)+' poin':'Geser slider Q3/Q4 untuk menaikkan target.';
+  document.getElementById('ptGrand').textContent=fmtP(c.grandPts);
+  document.getElementById('q4val').textContent=fmtP(proj.Q4);
+  document.getElementById('q4pc').textContent=k.target.Q4?'('+pct(proj.Q4/k.target.Q4)+')':'';
+  // ach bar
+  const tgt=c.fyt, fore=Math.max(0,c.fya-real), sc=100/1.2;
+  document.getElementById('abig').innerHTML=fmtP(c.fya)+' <small>/ '+fmtP(tgt)+' poin</small>';
+  document.getElementById('apct').innerHTML=pct(c.fyp)+(c.fyp>=1?' &check;':'');
+  document.getElementById('apct').style.color=c.fyp>=1?'var(--good)':(c.fyp>=0.9?'var(--warn)':'var(--bad)');
+  document.getElementById('atgt').textContent=fmtP(tgt);
+  document.getElementById('barR').style.width=Math.min(real/tgt,1.2)*sc+'%';
+  document.getElementById('barF').style.width=Math.min(fore/tgt,Math.max(0,1.2-real/tgt))*sc+'%';
+  document.getElementById('barTk').style.left=sc+'%';
+  // semester gate
+  const semChip=(nm,H)=>H.pass
+    ? '<div class="semchip ok"><div class="t">'+nm+'</div><div class="v">Lolos</div><div class="sub">'+pct(H.pct)+' dari target</div></div>'
+    : '<div class="semchip prog"><div class="t">'+nm+'</div><div class="v">'+pct(H.pct)+'</div><div class="sub">kejar '+fmtP(Math.max(0,H.tgt-H.tot))+' poin</div></div>';
+  document.getElementById('semrow').innerHTML=semChip('Semester 1',c.H1)+semChip('Semester 2',c.H2);
+  // quarter bars (static)
+  let qb='';for(const q of QS){const b=qbonus(q),fc=(q==='Q3'||q==='Q4'),p=Math.min(b.pct,1.2),col=b.pass?'var(--good)':(b.pct>=0.9?'var(--warn)':'var(--ablue)');
+    const fill=fc&&!b.pass?'background:repeating-linear-gradient(45deg,'+col+','+col+' 3px,transparent 3px,transparent 6px)':'background:'+col;
+    qb+='<div class="qb"><div class="ql">'+q+(fc?'<span class="fc">FC</span>':'')+'</div>'+
+      '<div class="qbar"><i style="width:'+(p/1.2*100)+'%;'+fill+'"></i><span class="tk" style="left:83.3%"></span></div>'+
+      '<div class="qv">'+fmtP(b.g.total)+'<small>/'+fmtP(b.tgt)+'</small> &middot; <span class="pc">'+pct(b.pct)+'</span></div></div>';}
+  document.getElementById('qbars').innerHTML=qb;
+  // reward
+  document.getElementById('grandrp').textContent=fmtRp(c.grand);
+  document.getElementById('grandcap').innerHTML=scheme==='R2'?'reward campaign (cash back per poin)':'campaign '+fmtRp(c.campTot)+' &middot; redemption '+fmtRp(c.redRp);
+  document.getElementById('camptot').textContent=fmtRp(c.campTot);
+  document.getElementById('campSub').innerHTML='Q1 '+fmtRp(k.realized.q1.rp)+' &middot; Q2 '+fmtRp(k.realized.q2.rp)+' &middot; Q3(FC) '+fmtRp(c.q3c.reward);
+  document.getElementById('redtot').textContent=fmtRp(c.redRp);
+  document.getElementById('redes2').innerHTML=cartItems()?(c.short>0?'<span style="color:var(--bad);font-weight:700">kurang '+fmtP(c.short)+' poin</span>':cartItems()+' item &middot; '+fmtP(cartCost())+' poin'):'belum dipilih';
+  document.getElementById('grand2').textContent=fmtRp(c.grand);
+  renderRedemption(c);
+}
+
+function renderRedemption(c){
+  if(scheme==='R2')return;   // R2 tanpa redemption tahunan
+  document.getElementById('rpts').textContent=fmtP(c.grandPts);
+  const items=cartItems(), slots=MAXITEM-items;
+  const pick=document.getElementById('redpick'), addBtn=document.getElementById('redadd');
+  if(slots>=1){let o='';redeem.forEach((t,i)=>o+='<option value="'+i+'">'+fmtP(t[0])+' poin &mdash; '+fmtRp(t[1])+'</option>');pick.innerHTML=o;pick.disabled=false;addBtn.disabled=false;}
+  else{pick.innerHTML='<option>slot penuh (maks 3)</option>';pick.disabled=true;addBtn.disabled=true;}
+  let ch='';Object.keys(cart).map(Number).sort((a,b)=>a-b).forEach(i=>{const q=cart[i];
+    ch+='<div class="redcartrow"><div class="ci"><span class="cp num">'+fmtP(redeem[i][0])+' <small>poin</small> &times;'+q+'</span><span class="cr num">'+fmtRp(redeem[i][1]*q)+'</span></div><button class="cx" data-rm="'+i+'" aria-label="hapus">&times;</button></div>';});
+  document.getElementById('redcart').innerHTML=ch;
+  document.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{delete cart[+b.dataset.rm];update();});
+  const sum=document.getElementById('redsum');
+  if(items===0){sum.className='redsum';sum.innerHTML='<span style="color:var(--ink3)">Belum ada reward dipilih. Pilih dari dropdown lalu Tambah (maks. '+MAXITEM+' item).</span>';return;}
+  if(c.short>0){sum.className='redsum short';
+    sum.innerHTML='<div class="big">Kurang '+fmtP(c.short)+' poin</div><div class="m">pilihan butuh '+fmtP(c.cost)+' poin, tersedia '+fmtP(c.grandPts)+'</div><div class="nudge">Tutup '+fmtP(c.short)+' poin penjualan lagi agar reward ini bisa ditukar.</div>';return;}
+  const remain=c.grandPts-c.cost;
+  let body='<div class="big">'+fmtRp(cartValue())+'</div><div class="m">'+items+' item &middot; '+fmtP(c.cost)+' poin ditukar &middot; <b>sisa '+fmtP(remain)+' poin</b></div>';
+  if(items<MAXITEM && remain>=redeem[0][0])body+='<div class="nudge" style="color:var(--good)">Sisa '+fmtP(remain)+' poin masih cukup menambah reward.</div>';
+  sum.className='redsum ok';sum.innerHTML=body;
+}
+
+function loadKios(){proj={Q3:{A:k.ach.Q3.A,B:k.ach.Q3.B,C:k.ach.Q3.C},Q4:0};cart={};renderStatic();update();}
+const sel=document.getElementById('kios');
+function fillKios(){sel.innerHTML='';SC.kios.forEach((kk,i)=>{const o=document.createElement('option');o.value=i;o.textContent=kk.nama+' - '+kk.id;sel.appendChild(o);});}
+function applySchemeUI(){const r2=scheme==='R2';
+  document.getElementById('rowRedem').style.display=r2?'none':'';
+  document.getElementById('redblock').style.display=r2?'none':'';
+  document.getElementById('ptGrandLbl').textContent=r2?'Total poin R2':'Poin untuk redemption';
+  document.getElementById('ptGrandSub').textContent=r2?'single pool':'penjualan + bonus';
+  const n=document.getElementById('r2note');
+  if(r2){n.style.display='';n.innerHTML='<b>R2:</b> poin skala beda (1:100 vs R1), tanpa multiplier. Reward = <b>cash back per poin</b> dari campaign Sell-out (Q1/Q2/Q3). Skema redemption tahunan belum ada.';}
+  else{n.style.display='none';}
+  document.getElementById('tR1').setAttribute('aria-selected',String(!r2));
+  document.getElementById('tR2').setAttribute('aria-selected',String(r2));}
+function switchScheme(s){setScheme(s);cart={};fillKios();applySchemeUI();loadKios();}
+sel.onchange=()=>{k=SC.kios[+sel.value];loadKios();};
+document.getElementById('tR1').onclick=()=>switchScheme('R1');
+document.getElementById('tR2').onclick=()=>switchScheme('R2');
+document.getElementById('redadd').onclick=()=>{const pick=document.getElementById('redpick');if(pick.disabled)return;
+  const i=+pick.value,q=+document.getElementById('redqty').value,mq=Math.min(q,MAXITEM-cartItems());
+  if(mq>=1){cart[i]=(cart[i]||0)+mq;update();}};
+document.getElementById('btnpdf').onclick=()=>window.print();
+fillKios();applySchemeUI();loadKios();
+</script>
+</body></html>
