@@ -178,7 +178,7 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;bac
 @media print{
   @page{size:A4 landscape;margin:0}
   html,body{background:#fff}
-  .wrap{display:none!important}
+  body>*:not(#pdfsheet){display:none!important}   /* sembunyikan back-link + .wrap; cuma sheet */
   #pdfsheet{display:block!important}
 }
 </style>
