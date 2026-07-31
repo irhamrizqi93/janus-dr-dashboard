@@ -1,31 +1,32 @@
 <!doctype html><html lang="id" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><meta name="robots" content="noindex,nofollow"><title>Kalkulator Program - Retailer R1</title>
 <style>
 :root{
+  /* Arah A — Tenang & Lega (ground hangat, garis rambut, warna minim) */
   --navy:#10384F; --ablue:#0071BC; --capri:#00BCFF; --green-b:#89D329;
-  --canvas:#F4F6F7; --rail:#E9EEF0; --surface:#FFFFFF;
-  --line:rgba(16,56,79,.11); --hair:rgba(16,56,79,.06);
-  --ink:#10384F; --ink2:#3E5B6D; --ink3:#6E8494; --ink4:#9DAFBA;
-  --good:#227544; --good-bg:#E4F2EA; --warn:#8A5200; --warn-bg:#FBEED2; --bad:#C0271F; --bad-bg:#FBE7E5;
-  --shadow:0 1px 2px rgba(16,56,79,.05); --radius:16px;
+  --canvas:#FBFAF7; --rail:#F2EFE9; --surface:#FFFFFF;
+  --line:#EAE6DF; --hair:#F1EDE6;
+  --ink:#10384F; --ink2:#4B5C63; --ink3:#8A8579; --ink4:#B7B0A5;
+  --good:#227544; --good-bg:#EBF3ED; --warn:#9A6412; --warn-bg:#F6EEDC; --bad:#B4551E; --bad-bg:#F7ECE3;
+  --shadow:0 1px 2px rgba(74,60,40,.05); --radius:16px;
 }
 @media (prefers-color-scheme:dark){:root{
   --canvas:#0B1922;--rail:#15272F;--surface:#13242D;--line:rgba(255,255,255,.09);--hair:rgba(255,255,255,.05);
   --ink:#EAF1F5;--ink2:#B7C7D0;--ink3:#8298A5;--ink4:#5B7280;
   --good:#7CD497;--good-bg:#123322;--warn:#E4B15C;--warn-bg:#33280C;--bad:#F0968E;--bad-bg:#361713;
   --shadow:0 1px 2px rgba(0,0,0,.28);}}
-:root[data-theme="light"]{--canvas:#F4F6F7;--rail:#E9EEF0;--surface:#FFFFFF;--line:rgba(16,56,79,.11);--hair:rgba(16,56,79,.06);--ink:#10384F;--ink2:#3E5B6D;--ink3:#6E8494;--ink4:#9DAFBA;--good:#227544;--good-bg:#E4F2EA;--warn:#8A5200;--warn-bg:#FBEED2;--bad:#C0271F;--bad-bg:#FBE7E5;--shadow:0 1px 2px rgba(16,56,79,.05);}
+:root[data-theme="light"]{--canvas:#FBFAF7;--rail:#F2EFE9;--surface:#FFFFFF;--line:#EAE6DF;--hair:#F1EDE6;--ink:#10384F;--ink2:#4B5C63;--ink3:#8A8579;--ink4:#B7B0A5;--good:#227544;--good-bg:#EBF3ED;--warn:#9A6412;--warn-bg:#F6EEDC;--bad:#B4551E;--bad-bg:#F7ECE3;--shadow:0 1px 2px rgba(74,60,40,.05);}
 :root[data-theme="dark"]{--canvas:#0B1922;--rail:#15272F;--surface:#13242D;--line:rgba(255,255,255,.09);--hair:rgba(255,255,255,.05);--ink:#EAF1F5;--ink2:#B7C7D0;--ink3:#8298A5;--ink4:#5B7280;--good:#7CD497;--good-bg:#123322;--warn:#E4B15C;--warn-bg:#33280C;--bad:#F0968E;--bad-bg:#361713;--shadow:0 1px 2px rgba(0,0,0,.28);}
 *{box-sizing:border-box}
 body{margin:0;background:var(--canvas);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,"Segoe UI",sans-serif;font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;letter-spacing:-.005em}
-.wrap{max-width:560px;margin:0 auto;padding:18px 15px 64px}
+.wrap{max-width:560px;margin:0 auto;padding:26px 19px 72px}
 .num{font-variant-numeric:tabular-nums}
 header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}
 .eyebrow{font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--ink3)}
-h1{font-size:22px;font-weight:800;letter-spacing:-.02em;margin:3px 0 2px}
+h1{font-size:27px;font-weight:600;letter-spacing:-.022em;margin:4px 0 3px;line-height:1.12}
 .sub{color:var(--ink3);font-size:12.5px}
 .brandmark{width:28px;height:28px;flex:0 0 auto;border-radius:7px;background:var(--navy);display:grid;place-items:center;margin-top:2px}
 .brandmark::before{content:"";width:12px;height:12px;background:linear-gradient(var(--capri),var(--capri)) 4.5px 0/3px 12px no-repeat,linear-gradient(var(--green-b),var(--green-b)) 0 4.5px/12px 3px no-repeat}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 16px;margin-bottom:11px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 19px;margin-bottom:14px}
 .ttl{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);margin:0 0 13px;display:flex;align-items:center;gap:8px}
 .ttl .r{margin-left:auto;font-weight:600;letter-spacing:.02em;text-transform:none;font-size:11px;color:var(--ink4)}
 .seg{display:inline-flex;background:var(--rail);border-radius:10px;padding:3px;gap:2px;border:1px solid var(--line)}
@@ -74,7 +75,7 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;bac
 .gate.open{background:var(--good-bg);color:var(--good)}.gate.shut{background:var(--warn-bg);color:var(--warn)}
 /* poin dikejar */
 .klbl{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
-.kbig{font-size:26px;font-weight:800;letter-spacing:-.025em;margin-top:3px;line-height:1.05}
+.kbig{font-size:34px;font-weight:400;letter-spacing:-.03em;margin-top:5px;line-height:1.02}
 .kbig small{font-size:13px;font-weight:600;color:var(--ink3)}
 .ksub{font-size:12px;color:var(--ink3);margin-top:3px}
 /* rows */
@@ -87,7 +88,7 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;bac
 .row.tot .l{font-weight:800;color:var(--ink);font-size:15px}
 .row.tot .r{font-size:18px;font-weight:800}
 /* ach bar */
-.abig{font-size:26px;font-weight:800;letter-spacing:-.025em;line-height:1.05}
+.abig{font-size:34px;font-weight:400;letter-spacing:-.03em;line-height:1.02}
 .abig small{font-size:13px;font-weight:600;color:var(--ink3)}
 .acap{font-size:12px;color:var(--ink3);margin-top:3px}
 .abar{position:relative;height:13px;background:var(--rail);border-radius:7px;overflow:hidden;display:flex;margin-top:12px}
