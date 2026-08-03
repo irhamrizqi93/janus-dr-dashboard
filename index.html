@@ -856,7 +856,7 @@ function mtRender(crop){
   if(window._mtdots)map.removeLayer(window._mtdots);
   window._mtlayer=L.geoJSON(d.geojson,{style:function(f){return{fillColor:f.properties.color||'#E2E5E0',color:'#10384F',weight:1,fillOpacity:.72};},
     onEachFeature:function(f,l){var p=f.properties;l.bindPopup('<b>'+p.kecamatan+'</b> ('+p.kabupaten+')<br>'+(p.hst_avg!=null?(p.hst_avg+' HST · '+p.fase+' · '+p.n_desa+' desa'):(p.fase&&p.fase!='—'?p.fase+' · '+p.n_desa+' desa':'belum ada data'))+(p.flags&&p.flags.length?'<br>'+p.flags.join('<br>'):''));}}).addTo(map);
-  window._mtdots=L.layerGroup((d.desa_points||[]).map(function(pt){return L.circleMarker([pt.lat,pt.lon],{radius:3,fillColor:pt.color,color:'#fff',weight:1,fillOpacity:.9}).bindPopup(pt.desa+' · '+pt.hst+' HST');})).addTo(map);
+  window._mtdots=L.layerGroup((d.desa_points||[]).map(function(pt){return L.circleMarker([pt.lat,pt.lon],{radius:3,fillColor:pt.color,color:'#fff',weight:1,fillOpacity:.9}).bindPopup(pt.desa+(pt.hst!=null?' · '+pt.hst+' HST':' · bera'));})).addTo(map);
   map.invalidateSize();
   try{map.fitBounds(window._mtlayer.getBounds(),{padding:[10,10]});}catch(e){}
   setTimeout(function(){map.invalidateSize();try{map.fitBounds(window._mtlayer.getBounds(),{padding:[10,10]});}catch(e){}},140);
