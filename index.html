@@ -412,6 +412,19 @@ summary::-webkit-details-marker{color:var(--ink-4)}
 .mt-legend{display:flex;align-items:center;gap:8px;font-size:12px;color:#6E8494;margin:8px 0}
 .mt-bar{flex:1;height:8px;border-radius:4px;background:linear-gradient(90deg,#2E7D32,#F5C518)}
 .mt-card{padding:10px 12px;border-bottom:1px solid var(--hair,#EAE6DF);font-size:14px}
+#mtcards summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:2px}
+#mtcards summary::-webkit-details-marker{display:none}
+.mt-kab{border-top:1px solid var(--hair,#EAE6DF)}
+.mt-kab>summary{padding:11px 4px;font-weight:700;font-size:15px;color:#10384F}
+.mt-kab>summary::before{content:'▸';color:#94A3B8;margin-right:6px;font-size:12px}
+.mt-kab[open]>summary::before{content:'▾'}
+.mt-kab>summary b,.mt-kec>summary b{margin-left:auto;font-variant-numeric:tabular-nums}
+.mt-kec>summary{padding:8px 4px 8px 18px;font-size:14px;color:#3E5B6D}
+.mt-kec>summary::before{content:'▸';color:#B0BAC5;margin-right:6px;font-size:11px}
+.mt-kec[open]>summary::before{content:'▾'}
+.mt-desa{display:flex;justify-content:space-between;padding:5px 6px 5px 34px;font-size:13px;color:#6E8494}
+.mt-desa b{color:#10384F;font-weight:600;font-variant-numeric:tabular-nums}
+.mt-ket{padding:0 6px 6px 34px;font-size:11px;color:#9A5B00}
 .mt-flag{color:#9A5B00;font-size:12px}
 .mt-stale{font-size:12px;color:#9A5B00;margin-bottom:6px}
 </style></head><body>
