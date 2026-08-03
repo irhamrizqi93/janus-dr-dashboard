@@ -847,6 +847,7 @@ function drF(){
   });
 }
 function mtRender(crop){
+  window._mtcrop=crop;
   var d=window.MT_DATA[crop]; if(!d||!window.L)return;
   var map=window._mtmap;
   if(!map){ map=window._mtmap=L.map('mtmap',{scrollWheelZoom:false});
@@ -856,10 +857,18 @@ function mtRender(crop){
   window._mtlayer=L.geoJSON(d.geojson,{style:function(f){return{fillColor:f.properties.color||'#E2E5E0',color:'#10384F',weight:1,fillOpacity:.72};},
     onEachFeature:function(f,l){var p=f.properties;l.bindPopup('<b>'+p.kecamatan+'</b> ('+p.kabupaten+')<br>'+(p.hst_avg!=null?(p.hst_avg+' HST · '+p.fase+' · '+p.n_desa+' desa'):'belum ada data')+(p.flags&&p.flags.length?'<br>'+p.flags.join('<br>'):''));}}).addTo(map);
   window._mtdots=L.layerGroup((d.desa_points||[]).map(function(pt){return L.circleMarker([pt.lat,pt.lon],{radius:3,fillColor:pt.color,color:'#fff',weight:1,fillOpacity:.9}).bindPopup(pt.desa+' · '+pt.hst+' HST');})).addTo(map);
+  map.invalidateSize();
   try{map.fitBounds(window._mtlayer.getBounds(),{padding:[10,10]});}catch(e){}
+  setTimeout(function(){map.invalidateSize();try{map.fitBounds(window._mtlayer.getBounds(),{padding:[10,10]});}catch(e){}},140);
   document.getElementById('mtcards').innerHTML=d.cards.map(function(x){return '<div class="mt-card"><b>'+x.kecamatan+'</b> <span class="muted">'+x.kabupaten+'</span> · '+x.hst_avg+' HST · '+x.fase+' · '+x.n_desa+' desa'+(x.flags.length?' <span class="mt-flag">'+x.flags.join(' ')+'</span>':'')+'</div>';}).join('');
 }
 function mtCrop(crop){document.querySelectorAll('.mt-chip').forEach(function(b){b.classList.toggle('on',b.dataset.crop===crop);});mtRender(crop);}
-if(document.getElementById('mtmap')&&window.MT_CROPS)setTimeout(function(){mtRender(window.MT_CROPS[0]);},80);
+// peta di-init saat tab Info dibuka (kalau di-init pas tab hidden → 0x0/abu, perlu invalidateSize)
+function mtShow(){ if(!window.MT_CROPS)return;
+  if(!window._mtmap){ mtRender(window._mtcrop||window.MT_CROPS[0]); }
+  else { setTimeout(function(){ window._mtmap.invalidateSize(); try{window._mtmap.fitBounds(window._mtlayer.getBounds(),{padding:[10,10]});}catch(e){} },60); }
+}
+var _mtInfo=document.getElementById('p-info');
+if(document.getElementById('mtmap')&&window.MT_CROPS&&_mtInfo&&_mtInfo.classList.contains('on'))setTimeout(mtShow,120);
 </script>
 </body></html>
