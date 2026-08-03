@@ -877,13 +877,21 @@ function mtRender(crop){
   map.invalidateSize();
   try{map.fitBounds(window._mtfit,{padding:[16,16]});}catch(e){}
   setTimeout(function(){map.invalidateSize();try{map.fitBounds(window._mtfit,{padding:[16,16]});}catch(e){}},140);
-  document.getElementById('mtcards').innerHTML=(d.tree||[]).map(function(kb){
+  window._mtpts={};(d.desa_points||[]).forEach(function(pt){window._mtpts[(pt.kecamatan+'|'+pt.desa).toLowerCase()]=[pt.lat,pt.lon];});
+  var cards=document.getElementById('mtcards');
+  cards.innerHTML=(d.tree||[]).map(function(kb){
     var kecs=kb.kecs.map(function(kc){
-      var ds=kc.desas.map(function(x){return '<div class="mt-desa"><span>'+x.desa+'</span><b>'+(x.hst!=null?x.hst+' HST':'bera')+'</b></div>'+(x.ket?'<div class="mt-ket">'+x.ket+'</div>':'');}).join('');
+      var ds=kc.desas.map(function(x){return '<div class="mt-desa"><span class="mt-dgo" data-k="'+(kc.kec+'|'+x.desa).toLowerCase()+'">'+x.desa+'</span><b>'+(x.hst!=null?x.hst+' HST':'bera')+'</b></div>'+(x.ket?'<div class="mt-ket">'+x.ket+'</div>':'');}).join('');
       return '<details class="mt-kec"><summary><span>'+kc.kec+'</span><b>'+(kc.hst!=null?kc.hst+' HST':'—')+'</b></summary>'+ds+'</details>';
     }).join('');
     return '<details class="mt-kab" open><summary><span>'+kb.kab+'</span><b>'+(kb.hst!=null?kb.hst+' HST':'—')+'</b></summary>'+kecs+'</details>';
   }).join('');
+  if(!window._mtcardsBound){cards.addEventListener('click',function(e){var t=e.target.closest('.mt-dgo');if(t)mtGo(t.dataset.k,t.textContent);});window._mtcardsBound=1;}
+}
+function mtGo(key,name){
+  var ll=window._mtpts&&window._mtpts[key],m=window._mtmap; if(!ll||!m)return;
+  var el=document.getElementById('mtmap'); if(el)el.scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(function(){m.invalidateSize();m.setView(ll,13,{animate:true});L.popup().setLatLng(ll).setContent('<b>'+name+'</b>').openOn(m);},260);
 }
 function mtCrop(crop){document.querySelectorAll('.mt-chip').forEach(function(b){b.classList.toggle('on',b.dataset.crop===crop);});mtRender(crop);}
 // peta di-init saat tab Info dibuka (kalau di-init pas tab hidden → 0x0/abu, perlu invalidateSize)
