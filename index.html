@@ -891,9 +891,12 @@ function mtRender(crop){
   if(!window._mtcardsBound){cards.addEventListener('click',function(e){var t=e.target.closest('.mt-dgo');if(t)mtGo(t.dataset.k,t.textContent);});window._mtcardsBound=1;}
 }
 function mtGo(key,name){
-  var ll=window._mtpts&&window._mtpts[key],m=window._mtmap; if(!ll||!m)return;
+  var o=window._mtpts&&window._mtpts[key],m=window._mtmap; if(!o||!m)return;
+  var crop=(window._mtcrop||'').replace(/\b\w/g,function(c){return c.toUpperCase();});
+  var sub=crop+(o.hst!=null?' · '+o.hst+' HST':' · bera');
   var el=document.getElementById('mtmap'); if(el)el.scrollIntoView({behavior:'smooth',block:'center'});
-  setTimeout(function(){m.invalidateSize();m.setView(ll,13,{animate:true});L.popup().setLatLng(ll).setContent('<b>'+name+'</b>').openOn(m);},260);
+  setTimeout(function(){m.invalidateSize();m.setView(o.ll,13,{animate:true});
+    L.popup().setLatLng(o.ll).setContent('<b>'+name+'</b><div style="font-size:11px;color:#6E8494;margin-top:2px">'+sub+'</div>').openOn(m);},260);
 }
 function mtCrop(crop){document.querySelectorAll('.mt-chip').forEach(function(b){b.classList.toggle('on',b.dataset.crop===crop);});mtRender(crop);}
 // peta di-init saat tab Info dibuka (kalau di-init pas tab hidden → 0x0/abu, perlu invalidateSize)
