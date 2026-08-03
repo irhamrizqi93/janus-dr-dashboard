@@ -879,7 +879,7 @@ function mtRender(crop){
   map.invalidateSize();
   try{map.fitBounds(window._mtfit,{padding:[16,16]});}catch(e){}
   setTimeout(function(){map.invalidateSize();try{map.fitBounds(window._mtfit,{padding:[16,16]});}catch(e){}},140);
-  window._mtpts={};(d.desa_points||[]).forEach(function(pt){window._mtpts[(pt.kecamatan+'|'+pt.desa).toLowerCase()]=[pt.lat,pt.lon];});
+  window._mtpts={};(d.desa_points||[]).forEach(function(pt){window._mtpts[(pt.kecamatan+'|'+pt.desa).toLowerCase()]={ll:[pt.lat,pt.lon],hst:pt.hst};});
   var cards=document.getElementById('mtcards');
   cards.innerHTML=(d.tree||[]).map(function(kb){
     var kecs=kb.kecs.map(function(kc){
