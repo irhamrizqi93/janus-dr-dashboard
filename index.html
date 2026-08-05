@@ -825,10 +825,7 @@ demoplot, marketing, dan 15 kegiatan BLF (Fani — pos budget sendiri).</p>
 :root{--navy:#10384F;--green:#89D329;--ablue:#0071BC;--canvas:#FBFAF7;--rail:#F2EFE9;--surface:#FFFFFF;
 --line:#EAE6DF;--hair:#F1EDE6;--ink:#10384F;--ink2:#3E5B6D;--ink3:#6E8494;--good:#227544;
 --radius:12px;--shadow:0 1px 2px rgba(74,60,40,.05)}
-:root[data-theme=dark]{--canvas:#0E1B24;--rail:#16262F;--surface:#14232E;--line:rgba(255,255,255,.10);
---hair:rgba(255,255,255,.06);--ink:#EAF0F3;--ink2:#AEC2CC;--ink3:#7C93A0}
-@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--canvas:#0E1B24;--rail:#16262F;--surface:#14232E;
---line:rgba(255,255,255,.10);--hair:rgba(255,255,255,.06);--ink:#EAF0F3;--ink2:#AEC2CC;--ink3:#7C93A0}}
+/* theme TERANG paksa (Abang: jangan ikut system dark) */
 *{box-sizing:border-box;margin:0}
 body{background:var(--canvas);color:var(--ink);font-family:&quot;IBM Plex Sans&quot;,-apple-system,&quot;Segoe UI&quot;,Roboto,sans-serif;
 font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;
@@ -860,6 +857,17 @@ padding:6.5px 0;border-bottom:1px solid var(--hair);font-size:13.5px}
 .row .pb{color:var(--ink2);text-align:right;font-size:12.5px;white-space:nowrap}
 .row .rp{color:var(--ink);font-weight:600;text-align:right;white-space:nowrap}
 .row.dim .rp,.row.dim .pb{color:var(--ink3);font-weight:500}
+/* grouping per produk: header nama+subtotal, lalu sub-baris kemasan */
+.grp{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:10px 0 5px;border-bottom:1px solid var(--hair)}
+.grp .gp{font-weight:600;color:var(--ink);font-size:14.5px}
+.grp .gv{color:var(--ink2);font-size:12.5px;font-weight:600;white-space:nowrap}
+.subrow{display:grid;grid-template-columns:12px minmax(0,1fr) 116px 70px;gap:6px;align-items:baseline;
+padding:6px 0;border-bottom:1px solid var(--hair);font-size:13.5px}
+.subrow:last-child{border:0}
+.subrow .km{color:var(--ink3);font-size:12.5px}
+.subrow .pb{color:var(--ink2);text-align:right;font-size:12.5px;white-space:nowrap}
+.subrow .rp{color:var(--ink);font-weight:600;text-align:right;white-space:nowrap}
+.subrow.dim .rp,.subrow.dim .pb{color:var(--ink3);font-weight:500}
 .empty{color:var(--ink3);font-size:13px;padding:10px 0}
 footer{color:var(--ink3);font-size:11px;text-align:center;margin-top:14px}
 &lt;/style&gt;
@@ -895,10 +903,22 @@ function render(){
     if(!its.length) continue;
     const sub=its.reduce((s,d)=&gt;s+d.rp,0); grand+=sub;
     html+=`&lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;chead&quot;&gt;&lt;h2&gt;${k}&lt;/h2&gt;&lt;div&gt;&lt;b&gt;${jt(sub)}&lt;/b&gt;&lt;span&gt;${its.length} item&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;`;
-    for(const d of its){
-      const pb=`${d.pcs.toLocaleString(&#x27;id-ID&#x27;)} pcs`+(d.box?` (${d.box} ø)`:&#x27;&#x27;);
-      html+=`&lt;div class=&quot;row${d.rp?&#x27;&#x27;:&#x27; dim&#x27;}&quot;&gt;&lt;span class=&quot;pk&quot;&gt;${d.p}&lt;/span&gt;&lt;span class=&quot;km&quot;&gt;${d.k}&lt;/span&gt;`
-           +`&lt;span class=&quot;pb&quot;&gt;${pb}&lt;/span&gt;&lt;span class=&quot;rp&quot;&gt;${jt(d.rp)}&lt;/span&gt;&lt;/div&gt;`;
+    const groups={};
+    for(const d of its){(groups[d.p]=groups[d.p]||[]).push(d);}   // grup per produk (nama sekali)
+    const pb=d=&gt;`${d.pcs.toLocaleString(&#x27;id-ID&#x27;)} pcs`+(d.box?` (${d.box} ø)`:&#x27;&#x27;);
+    for(const p of Object.keys(groups).sort((a,b)=&gt;a.toLowerCase().localeCompare(b.toLowerCase()))){
+      const g=groups[p];
+      if(g.length===1){                                          // 1 kemasan → baris tunggal (nama inline)
+        const d=g[0];
+        html+=`&lt;div class=&quot;row${d.rp?&#x27;&#x27;:&#x27; dim&#x27;}&quot;&gt;&lt;span class=&quot;pk&quot;&gt;${p}&lt;/span&gt;&lt;span class=&quot;km&quot;&gt;${d.k}&lt;/span&gt;`
+             +`&lt;span class=&quot;pb&quot;&gt;${pb(d)}&lt;/span&gt;&lt;span class=&quot;rp&quot;&gt;${jt(d.rp)}&lt;/span&gt;&lt;/div&gt;`;
+      }else{                                                     // &gt;1 kemasan → header nama+subtotal, sub-baris kemasan
+        const gs=g.reduce((s,d)=&gt;s+d.rp,0);
+        html+=`&lt;div class=&quot;grp&quot;&gt;&lt;span class=&quot;gp&quot;&gt;${p}&lt;/span&gt;&lt;span class=&quot;gv&quot;&gt;${jt(gs)}&lt;/span&gt;&lt;/div&gt;`;
+        for(const d of g)
+          html+=`&lt;div class=&quot;subrow${d.rp?&#x27;&#x27;:&#x27; dim&#x27;}&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&quot;km&quot;&gt;${d.k}&lt;/span&gt;`
+               +`&lt;span class=&quot;pb&quot;&gt;${pb(d)}&lt;/span&gt;&lt;span class=&quot;rp&quot;&gt;${jt(d.rp)}&lt;/span&gt;&lt;/div&gt;`;
+      }
     }
     html+=&#x27;&lt;/div&gt;&#x27;;
   }
