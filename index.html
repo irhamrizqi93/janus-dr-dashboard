@@ -20,6 +20,7 @@
 .rtl-tx small{font-size:12.5px;color:var(--ink-3)}
 .rtl-ar{font-size:22px;color:var(--ink-4);flex:none}
 .rtl-view{display:flex;flex-direction:column;height:calc(100vh - 58px)}
+.rtl-land[hidden],.rtl-view[hidden]{display:none!important}  /* atribut hidden WAJIB menang atas display:flex — kalau tidak semua numpuk */
 .rtl-back{align-self:flex-start;margin:8px 12px 4px;background:var(--rail);border:1px solid var(--line);border-radius:10px;padding:8px 14px;font:inherit;font-weight:600;color:var(--ink);cursor:pointer}
 .rtl-if{flex:1;height:auto}
 :root{
