@@ -1543,7 +1543,6 @@ function tb(t){
   document.querySelectorAll('.tab').forEach(function(b){b.classList.toggle('on',b.dataset.t===t);});
   document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('on',p.id==='p-'+t);});
   var fb=document.getElementById('fab');if(fb)fb.style.display=(t==='agenda'||t==='papan')?'flex':'none';
-  var mh=document.querySelector('body>header');if(mh)mh.style.display=(t==='program')?'none':'';  /* Retailer: landing bersih, tanpa header Papan */
   if(t==='info'&&typeof mtShow==='function')setTimeout(mtShow,60);
   try{history.replaceState(null,'','#'+t);}catch(e){}
   window.scrollTo(0,0);
