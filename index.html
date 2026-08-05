@@ -846,9 +846,18 @@ input{background:var(--rail)}input::placeholder{color:var(--ink3);font-weight:50
 .grand .lab{color:#B9D2DD;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
 .grand .big{font-size:24px;font-weight:600}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:6px 14px 10px;margin-bottom:12px;box-shadow:var(--shadow)}
-.chead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:11px 0 8px;border-bottom:1px solid var(--line)}
-.chead h2{font-size:16px;font-weight:600}.chead b{color:var(--ablue);font-size:15px;white-space:nowrap}
+/* accordion: klik header kios → list ngumpet (native details/summary) */
+details.card&gt;summary{list-style:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+details.card&gt;summary::-webkit-details-marker{display:none}
+.chead{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:11px 0 8px;border-bottom:1px solid var(--line)}
+details.card:not([open])&gt;summary .chead{border-bottom:0;padding-bottom:2px}
+.chead .cl{display:flex;align-items:center;gap:8px;min-width:0}
+.chead h2{font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chead .cr{text-align:right;flex:none}
+.chead b{color:var(--ablue);font-size:15px;white-space:nowrap}
 .chead span{color:var(--ink3);font-size:11px;display:block;text-align:right}
+.chev{flex:none;width:16px;height:16px;color:var(--ink3);transition:transform .18s}
+details.card[open] .chev{transform:rotate(180deg)}
 .row{display:grid;grid-template-columns:minmax(0,1fr) 52px 116px 70px;gap:6px;align-items:baseline;
 padding:6.5px 0;border-bottom:1px solid var(--hair);font-size:13.5px}
 .row:last-child{border:0}
@@ -902,7 +911,9 @@ function render(){
     const its=P.data[k].filter(d=&gt;!qf||d.p.toLowerCase().includes(qf));
     if(!its.length) continue;
     const sub=its.reduce((s,d)=&gt;s+d.rp,0); grand+=sub;
-    html+=`&lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;chead&quot;&gt;&lt;h2&gt;${k}&lt;/h2&gt;&lt;div&gt;&lt;b&gt;${jt(sub)}&lt;/b&gt;&lt;span&gt;${its.length} item&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;`;
+    html+=`&lt;details class=&quot;card&quot; open&gt;&lt;summary&gt;&lt;div class=&quot;chead&quot;&gt;&lt;div class=&quot;cl&quot;&gt;`
+         +`&lt;svg class=&quot;chev&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2.4&quot; stroke-linecap=&quot;round&quot;&gt;&lt;path d=&quot;M6 9l6 6 6-6&quot;/&gt;&lt;/svg&gt;`
+         +`&lt;h2&gt;${k}&lt;/h2&gt;&lt;/div&gt;&lt;div class=&quot;cr&quot;&gt;&lt;b&gt;${jt(sub)}&lt;/b&gt;&lt;span&gt;${its.length} item&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/summary&gt;`;
     const groups={};
     for(const d of its){(groups[d.p]=groups[d.p]||[]).push(d);}   // grup per produk (nama sekali)
     const pb=d=&gt;`${d.pcs.toLocaleString(&#x27;id-ID&#x27;)} pcs`+(d.box?` (${d.box} ø)`:&#x27;&#x27;);
@@ -920,7 +931,7 @@ function render(){
                +`&lt;span class=&quot;pb&quot;&gt;${pb(d)}&lt;/span&gt;&lt;span class=&quot;rp&quot;&gt;${jt(d.rp)}&lt;/span&gt;&lt;/div&gt;`;
       }
     }
-    html+=&#x27;&lt;/div&gt;&#x27;;
+    html+=&#x27;&lt;/details&gt;&#x27;;
   }
   out.innerHTML=html||&#x27;&lt;div class=&quot;empty&quot;&gt;Tak ada produk cocok filter.&lt;/div&gt;&#x27;;
   document.getElementById(&#x27;gval&#x27;).textContent=jt(grand);
