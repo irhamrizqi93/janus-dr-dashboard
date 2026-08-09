@@ -51,22 +51,28 @@ header:after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;
 header h1{margin:0;font-size:19px;font-weight:600;letter-spacing:-.3px}
 header p{margin:2px 0 0;font-size:11.5px;color:var(--ink-3);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-/* ── Nav: BOTTOM bar di HP (thumb zone) · top sticky di layar lebar ── */
-.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;
-  background:var(--surface);border-top:1px solid var(--line);
-  padding:6px 8px calc(6px + env(safe-area-inset-bottom));box-shadow:var(--sh-pop)}
-.tab{flex:1;min-height:48px;border:0;background:transparent;color:var(--ink-3);
-  font-family:inherit;font-size:11px;font-weight:500;cursor:pointer;border-radius:10px;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
-  transition:background-color .15s,color .15s}
-.tab .ti{line-height:1;display:block}.tab .ti svg{width:21px;height:21px;display:block}
-.tab.on{color:var(--ablue);font-weight:600;background:rgba(0,188,255,.12)}
+/* ── Nav: gooey BOTTOM pill di HP (thumb zone) · top sticky di layar lebar ── */
+.tabs{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom));z-index:40;
+  display:flex;width:min(360px,calc(100vw - 20px));height:84px;filter:drop-shadow(0 12px 22px rgba(16,56,79,.24))}
+.navgoo{position:absolute;inset:0;filter:url(#goo);pointer-events:none}
+.navbar{position:absolute;left:0;right:0;bottom:0;height:60px;background:#10384F;border-radius:22px}
+.navblob{position:absolute;left:0;bottom:24px;width:56px;height:56px;background:#10384F;border-radius:50%;
+  transition:transform .6s cubic-bezier(.34,1.42,.5,1)}
+.tab{flex:1;min-width:0;height:84px;position:relative;z-index:1;border:0;background:transparent;color:#93A9B6;
+  font-family:inherit;font-size:10.5px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-end;gap:5px;padding:0 0 10px;transition:color .3s}
+.tab .ti{line-height:0;display:block;transition:transform .6s cubic-bezier(.34,1.42,.5,1)}
+.tab .ti svg{width:23px;height:23px;display:block}
+.tab.on{color:#fff;font-weight:700}
+.tab.on .ti{transform:translateY(-21px)}
 @media(min-width:760px){
-  .tabs{position:sticky;top:0;bottom:auto;border-top:0;border-bottom:1px solid var(--line);
-    box-shadow:0 1px 3px rgba(16,56,79,.06);padding:0 12px}
-  .tab{flex-direction:row;gap:7px;min-height:46px;font-size:13px;border-radius:0;
-    border-bottom:3px solid transparent}
-  .tab.on{background:transparent;border-bottom-color:var(--blue)}
+  .tabs{position:sticky;left:auto;transform:none;top:0;bottom:auto;width:auto;height:auto;
+    background:var(--surface);border-bottom:1px solid var(--line);box-shadow:0 1px 3px rgba(16,56,79,.06);padding:0 12px;filter:none}
+  .navgoo{display:none}
+  .tab{flex-direction:row;gap:7px;min-height:46px;height:auto;font-size:13px;border-radius:0;
+    border-bottom:3px solid transparent;color:var(--ink-3);justify-content:center;padding:0}
+  .tab .ti{transform:none!important}
+  .tab.on{background:transparent;color:var(--ablue);border-bottom-color:var(--ablue)}
 }
 .wrap{max-width:1000px;margin:0 auto;padding:14px 12px 96px}
 @media(min-width:760px){.wrap{padding-bottom:40px}}
@@ -388,10 +394,7 @@ header:after{display:none}
 header h1{font-size:22px;letter-spacing:-.6px}
 header p{font-size:12px;color:var(--ink-4)}
 .ppcount{background:transparent;border:1px solid #e6b800;color:#8a6d00}
-/* nav: 1 aksen halus (tanpa pil blok) */
-.tabs{box-shadow:none;border-top:1px solid var(--line)}
-.tab.on{background:transparent;color:var(--ablue)}
-@media(min-width:760px){.tab.on{border-bottom-color:var(--ablue)}}
+/* nav: gaya gooey (HP) + top-nav (desktop) diatur di blok .tabs utama (atas) */
 /* kanvas lebih lega + kolom baca sempit */
 .wrap{padding:22px 16px 104px;max-width:760px}
 /* permukaan flat hairline */
@@ -450,7 +453,9 @@ summary::-webkit-details-marker{color:var(--ink-4)}
 .mt-stale{font-size:12px;color:#6E8494;margin-bottom:6px}
 </style></head><body>
 <header><div class="hbar"><span class="xlogo"><svg viewBox="0 0 24 24" width="26" height="26"><rect x="10" y="2" width="4" height="20" rx="1.4" fill="#00BCFF"/><rect x="2" y="10" width="20" height="4" rx="1.4" fill="#89D329"/></svg></span><div><h1>Dashboard Semarang Hebat</h1><p>Kegiatan DR · Retailer · Stok — tap untuk atur</p></div></div></header>
+<svg class="goodefs" width="0" height="0" aria-hidden="true"><defs><filter id="goo"><feGaussianBlur in="SourceGraphic" stdDeviation="6" result="b"/><feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -10" result="g"/><feComposite in="SourceGraphic" in2="g" operator="atop"/></filter></defs></svg>
 <nav class="tabs">
+  <div class="navgoo" aria-hidden="true"><span class="navbar"></span><span class="navblob" id="navblob"></span></div>
   <button class="tab on" data-t="agenda" onclick="tb('agenda')"><span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1.2" fill="currentColor" stroke="none"/><circle cx="3.5" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="3.5" cy="18" r="1.2" fill="currentColor" stroke="none"/></svg></span><span>Agenda</span></button>
   <button class="tab" data-t="papan" onclick="tb('papan')"><span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3.2" y="4" width="4.8" height="16" rx="1.4"/><rect x="9.6" y="4" width="4.8" height="11" rx="1.4"/><rect x="16" y="4" width="4.8" height="7" rx="1.4"/></svg></span><span>Papan</span></button>
   <button class="tab" data-t="dr" onclick="tb('dr')"><span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.9 3.1-6 7-6s7 2.1 7 6"/></svg></span><span>DR</span></button>
@@ -1575,15 +1580,22 @@ applySchemeUI();loadKios();search.value=k.nama;
 <button class="fab" id="fab" onclick="shNew()" title="Ajukan kegiatan baru">＋</button>
 <footer>Janus DR Dashboard · update 2026-08-09 00:00 WIB · field jadwal/program saja (tanpa angka bisnis) · <b>Area: Demak Kudus · Grobogan · Kab Semarang saja</b> (isolasi — TM lain tak tercampur)</footer>
 <script>
+function navblobpos(){
+  var b=document.getElementById('navblob');var a=document.querySelector('.tab.on');
+  if(b&&a){b.style.transform='translateX('+(a.offsetLeft+a.offsetWidth/2-28)+'px)';}
+}
 function tb(t){
   document.querySelectorAll('.tab').forEach(function(b){b.classList.toggle('on',b.dataset.t===t);});
   document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('on',p.id==='p-'+t);});
+  navblobpos();
   var fb=document.getElementById('fab');if(fb)fb.style.display=(t==='agenda'||t==='papan')?'flex':'none';
   if(t==='info'&&typeof mtShow==='function')setTimeout(mtShow,60);
   document.body.classList.remove('rtl-full');   // pindah tab → keluar mode full-screen
   try{history.replaceState(null,'','#'+t);}catch(e){}
   window.scrollTo(0,0);
 }
+window.addEventListener('load',navblobpos);
+window.addEventListener('resize',navblobpos);
 function rtlShow(v){var L=document.getElementById('rtlLand');if(!L)return;L.classList.add('off');
   document.getElementById('rtlStok').classList.toggle('on',v==='stok');
   document.getElementById('rtlProg').classList.toggle('on',v==='prog');
