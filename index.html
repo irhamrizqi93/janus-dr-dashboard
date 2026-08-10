@@ -550,6 +550,7 @@ function fallbackCopy(msg){
     toast('📋 Tersalin — kirim manual ke TM (Bang Irham).');
   }).catch(function(){prompt('Salin & kirim ke TM:',msg);});
 }
+function actRef(r){r=r||'';var h=r.indexOf('#');if(h<1)return false;var n=r.slice(h+1);return n.length>0&&n.length<4&&/^[0-9]+$/.test(n);}
 function postAction(body,onOk,btn){
   if(btn){btn.disabled=true;btn.textContent='⏳ Mengirim...';}
   fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
@@ -564,7 +565,7 @@ function sendUsul(){
   var x=KB[CUR];if(!x)return;
   var v=document.getElementById('shin').value.trim();
   if(!v){toast('Isi dulu nilainya ya.');return;}
-  if(!API||!x.ref){fallbackCopy(usulMsg(x));shClose();return;}
+  if(!API||!actRef(x.ref)){fallbackCopy(usulMsg(x));shClose();return;}
   var act=ACT_NAME[ACT],i=CUR,a=ACT;
   var body={action:act,ref:x.ref,nama:x.nama,dr:x.dmr,jenis:x.jenis,kec:x.kec,desa:x.desa,tgl_lama:x.tgl};
   if(a==='B'||a==='F'){body.alasan=v;}else{body.baru=v;}
@@ -593,7 +594,7 @@ function sendRevisi(){
   if(!tgl&&!lok){toast('Isi tanggal atau lokasi ya (boleh dua-duanya).');return;}
   var msg='REVISI PLAN: '+x.jenis+' · '+x.dmr+' · '+(x.desa||x.kec)+' ('+(x.tgl||'TBD')+')'
     +(tgl?' → tgl '+tgl:'')+(lok?' → lokasi '+lok:'')+' — dari papan DR';
-  if(!API||!x.ref){fallbackCopy(msg);shClose();return;}
+  if(!API||!actRef(x.ref)){fallbackCopy(msg);shClose();return;}
   var i=CUR;
   var body={action:'revisi_plan',ref:x.ref,nama:x.nama,dr:x.dmr,jenis:x.jenis,kec:x.kec,desa:x.desa,tgl_lama:x.tgl,baru:tgl,baru_lokasi:lok};
   postAction(body,function(){
