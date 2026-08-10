@@ -630,7 +630,9 @@ function shOpen(i){
   document.getElementById('shtitle').textContent=x.jenis+' — '+x.dmr;
   document.getElementById('shsub').textContent=(x.tgl||'TBD')+' · '+x.kec+(x.desa?' · '+x.desa:'')+' · DSR '+x.dsr;
   var b='';
-  if(x.col==='plan'&&!x.ref){
+  if(x.col==='plan'&&x.bt){
+    b+='<div class="muted" style="padding:6px 2px">📣 Kegiatan '+x.jenis+' — revisi/batal lewat TM (belum bisa dari papan).</div>';
+  } else if(x.col==='plan'&&!x.ref){
     b+='<div class="muted" style="padding:6px 2px">🌱 Demoplot — perubahan lewat TM (belum bisa dari papan).</div>';
   } else if(x.col==='plan'){
     b+='<button class="shbtn go" onclick="openRevisi()">✏️ Revisi Plan (tanggal &amp; lokasi)</button>';
