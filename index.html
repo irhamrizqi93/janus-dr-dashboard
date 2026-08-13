@@ -202,6 +202,10 @@ border-bottom:1px solid var(--hair,rgba(16,56,79,.07));font-size:13px}
 .pgb:disabled{opacity:.4}
 /* Tombol Terima/Tolak proposal — thumb-friendly ≥44px */
 .propact{flex-basis:100%;order:4;display:flex;gap:8px;margin-top:8px}
+.proprow{cursor:pointer}
+.proprow:active{background:var(--rail,#F1F4F6)}
+.tapx{flex:0 0 auto;color:var(--ink-4,#93A5B1);font-size:20px;font-weight:400;margin-left:auto}
+.propbtns{display:flex;gap:10px;margin-top:16px}
 .pbtn{flex:1;min-height:44px;border-radius:9px;border:1px solid var(--line);font-size:13.5px;
   font-weight:700;cursor:pointer;background:var(--surface)}
 .pbtn.ok{background:var(--green,#89D329);border-color:var(--green,#89D329);color:var(--navy)}
@@ -683,12 +687,20 @@ function shOpen(i){
 }
 function shClose(){document.getElementById('sheet').classList.remove('on');}
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},3500);}
-// ── Proposal ACC dari papan: tombol → keypad PIN → POST (Worker cek PIN, ROG jalankan) ──
-var PINPEND=null,PINBUF='';
-function propAsk(btn,action){
+// ── Proposal ACC: TAP baris → box konfirmasi → keypad PIN → POST (Worker cek PIN, ROG jalankan) ──
+var PINPEND=null,PINBUF='',PROPSEL=null;
+function propOpen(row){
+  PROPSEL={pid:row.dataset.pid,dr:row.dataset.dr,jenis:row.dataset.jenis,desa:row.dataset.desa,row:row};
+  document.getElementById('propTitle').textContent=((PROPSEL.jenis||'')+' · '+(PROPSEL.dr||'')).replace(/^ · | · $/,'')||'Proposal';
+  document.getElementById('propSub').textContent=PROPSEL.desa||'';
+  document.getElementById('propModal').classList.add('on');
+}
+function propClose(){document.getElementById('propModal').classList.remove('on');}
+function propConfirm(action){
+  if(!PROPSEL)return;
   if(!API){toast('Endpoint aksi belum diset — pakai Janus dulu.');return;}
-  var r=btn.closest('.lgrow');
-  PINPEND={action:action,pid:r.dataset.pid,dr:r.dataset.dr,jenis:r.dataset.jenis,desa:r.dataset.desa,row:r};
+  PINPEND={action:action,pid:PROPSEL.pid,dr:PROPSEL.dr,jenis:PROPSEL.jenis,desa:PROPSEL.desa,row:PROPSEL.row};
+  propClose();
   PINBUF='';renderDots();
   document.getElementById('pinTitle').textContent=(action==='approve'?'✓ Terima':'✗ Tolak')+' — '+((PINPEND.jenis||'')+' '+(PINPEND.dr||'')).trim();
   document.getElementById('pinModal').classList.add('on');
@@ -707,7 +719,8 @@ function pinSubmit(){
     .then(function(r){if(r.status===403)throw 'pin';if(!r.ok)throw 0;return r.json();})
     .then(function(){
       var row=p.row;pinClose();
-      if(row){row.style.opacity='.55';var pa=row.querySelector('.propact');if(pa)pa.innerHTML='<span class="muted">⏳ menunggu ROG…</span>';}
+      if(row){row.style.opacity='.55';row.onclick=null;row.style.cursor='default';
+        var tx=row.querySelector('.tapx');if(tx){tx.textContent='⏳';tx.style.fontSize='14px';}}
       toast(okmsg);
     })
     .catch(function(e){PINBUF='';renderDots();toast(e==='pin'?'❌ PIN salah — coba lagi.':'⚠️ Gagal terkirim — coba lagi.');});
@@ -1659,6 +1672,17 @@ applySchemeUI();loadKios();search.value=k.nama;
     <button class="shbtn ghost" onclick="shClose()">Tutup</button></div>
 </div>
 <div class="toast" id="toast"></div>
+<div class="pinm" id="propModal" onclick="if(event.target===this)propClose()">
+  <div class="pinbox">
+    <div class="pintitle" id="propTitle"></div>
+    <div class="pinsub" id="propSub"></div>
+    <div class="propbtns">
+      <button class="pbtn ok" onclick="propConfirm('approve')">✓ Terima</button>
+      <button class="pbtn no" onclick="propConfirm('reject')">✗ Tolak</button>
+    </div>
+    <button class="pincx" onclick="propClose()">Tutup</button>
+  </div>
+</div>
 <div class="pinm" id="pinModal" onclick="if(event.target===this)pinClose()">
   <div class="pinbox">
     <div class="pintitle" id="pinTitle">Masukin PIN</div>
