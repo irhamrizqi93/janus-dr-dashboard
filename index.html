@@ -1700,6 +1700,7 @@ function rtlShow(v){var L=document.getElementById('rtlLand');if(!L)return;L.clas
 function rtlBack(){var L=document.getElementById('rtlLand');if(!L)return;L.classList.remove('off');
   document.getElementById('rtlStok').classList.remove('on');document.getElementById('rtlProg').classList.remove('on');
   document.body.classList.remove('rtl-full');window.scrollTo(0,0);}
+initPaged();
 if(location.hash&&document.getElementById('p-'+location.hash.slice(1)))tb(location.hash.slice(1));
 // filter waktu tab DR — sembunyikan baris + lipat grup kosong (count jenis ikut update)
 function drF(){
