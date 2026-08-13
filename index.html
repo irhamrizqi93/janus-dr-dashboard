@@ -194,6 +194,37 @@ border-bottom:1px solid var(--hair,rgba(16,56,79,.07));font-size:13px}
 .lgv{flex:0 0 auto;color:var(--ink-2,#3E5B6D);font-variant-numeric:tabular-nums}
 .lgx{flex:0 0 auto;font-size:11px;color:#C62828;font-weight:600}
 @media(max-width:420px){.lgw{flex-basis:100%;order:3}}
+/* Pagination list (5/hal) — panjang fix, sisanya lewat nomor halaman */
+.pgnav{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:8px 0 2px}
+.pgb{min-width:34px;height:34px;padding:0 9px;border:1px solid var(--line);background:var(--surface);
+  color:var(--ink-2);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
+.pgb.on{background:var(--ablue,#0071BC);border-color:var(--ablue,#0071BC);color:#fff}
+.pgb:disabled{opacity:.4}
+/* Tombol Terima/Tolak proposal — thumb-friendly ≥44px */
+.propact{flex-basis:100%;order:4;display:flex;gap:8px;margin-top:8px}
+.pbtn{flex:1;min-height:44px;border-radius:9px;border:1px solid var(--line);font-size:13.5px;
+  font-weight:700;cursor:pointer;background:var(--surface)}
+.pbtn.ok{background:var(--green,#89D329);border-color:var(--green,#89D329);color:var(--navy)}
+.pbtn.no{background:var(--surface);border-color:#C62828;color:#C62828}
+/* Keypad PIN — model HP jadul (grid angka besar) */
+.pinm{position:fixed;inset:0;background:rgba(16,56,79,.5);display:none;z-index:60;
+  align-items:flex-end;justify-content:center}
+.pinm.on{display:flex}
+.pinbox{background:var(--surface);width:100%;max-width:360px;border-radius:16px 16px 0 0;
+  padding:18px 18px 26px;box-shadow:0 -6px 24px rgba(16,56,79,.18)}
+.pintitle{font-size:15px;font-weight:700;color:var(--navy);text-align:center}
+.pinsub{font-size:12px;color:var(--ink-3);text-align:center;margin-top:2px}
+.pdots{display:flex;gap:12px;justify-content:center;margin:16px 0 18px}
+.pdot{width:13px;height:13px;border-radius:99px;border:2px solid var(--ink-4,#93A5B1)}
+.pdot.f{background:var(--ablue,#0071BC);border-color:var(--ablue,#0071BC)}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pk{height:58px;border:1px solid var(--line);background:var(--rail,#F1F4F6);border-radius:12px;
+  font-size:22px;font-weight:600;color:var(--navy);cursor:pointer}
+.pk:active{background:var(--ablue,#0071BC);color:#fff}
+.pk.go{background:var(--green,#89D329);border-color:var(--green,#89D329);color:var(--navy);font-size:24px}
+.pk.act{font-size:20px;color:var(--ink-3)}
+.pincx{width:100%;margin-top:14px;height:42px;border:0;background:none;color:var(--ink-3);
+  font-size:13px;cursor:pointer}
 /* ── Budget DR (tab DR) — 1 fokus: donut + kartu per DSR. Tabel lebar HARAM di HP. ── */
 .bhero{padding:16px}
 .bwrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
@@ -652,6 +683,54 @@ function shOpen(i){
 }
 function shClose(){document.getElementById('sheet').classList.remove('on');}
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},3500);}
+// ── Proposal ACC dari papan: tombol → keypad PIN → POST (Worker cek PIN, ROG jalankan) ──
+var PINPEND=null,PINBUF='';
+function propAsk(btn,action){
+  if(!API){toast('Endpoint aksi belum diset — pakai Janus dulu.');return;}
+  var r=btn.closest('.lgrow');
+  PINPEND={action:action,pid:r.dataset.pid,dr:r.dataset.dr,jenis:r.dataset.jenis,desa:r.dataset.desa,row:r};
+  PINBUF='';renderDots();
+  document.getElementById('pinTitle').textContent=(action==='approve'?'✓ Terima':'✗ Tolak')+' — '+((PINPEND.jenis||'')+' '+(PINPEND.dr||'')).trim();
+  document.getElementById('pinModal').classList.add('on');
+}
+function renderDots(){var h='';for(var i=0;i<6;i++)h+='<span class="pdot'+(i<PINBUF.length?' f':'')+'"></span>';document.getElementById('pinDots').innerHTML=h;}
+function pinKey(d){if(PINBUF.length>=6)return;PINBUF+=d;renderDots();if(PINBUF.length===6)setTimeout(pinSubmit,140);}
+function pinDel(){PINBUF=PINBUF.slice(0,-1);renderDots();}
+function pinClose(){document.getElementById('pinModal').classList.remove('on');PINBUF='';PINPEND=null;}
+function pinSubmit(){
+  if(!PINPEND||PINBUF.length<4){toast('PIN minimal 4 angka.');return;}
+  var p=PINPEND,act=p.action==='approve'?'proposal_approve':'proposal_reject';
+  var body={action:act,pid:p.pid,pin:PINBUF,dr:p.dr,jenis:p.jenis,desa:p.desa};
+  if(p.action==='reject')body.alasan='ditolak dari papan (Abang)';
+  var okmsg=(p.action==='approve'?'✅ Diterima':'🗑️ Ditolak')+' — diproses ROG (±10 menit).';
+  fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+    .then(function(r){if(r.status===403)throw 'pin';if(!r.ok)throw 0;return r.json();})
+    .then(function(){
+      var row=p.row;pinClose();
+      if(row){row.style.opacity='.55';var pa=row.querySelector('.propact');if(pa)pa.innerHTML='<span class="muted">⏳ menunggu ROG…</span>';}
+      toast(okmsg);
+    })
+    .catch(function(e){PINBUF='';renderDots();toast(e==='pin'?'❌ PIN salah — coba lagi.':'⚠️ Gagal terkirim — coba lagi.');});
+}
+// ── Pagination generik: kartu .paged → tampil N baris/hal + nomor halaman ──
+function initPaged(){
+  document.querySelectorAll('.paged').forEach(function(c){
+    var rows=[].slice.call(c.querySelectorAll(':scope > .lgrow'));
+    var ps=parseInt(c.dataset.ps||'5',10);
+    if(rows.length<=ps)return;
+    var pages=Math.ceil(rows.length/ps),cur=0;
+    var nav=document.createElement('div');nav.className='pgnav';
+    c.parentNode.insertBefore(nav,c.nextSibling);
+    function show(pp){cur=Math.max(0,Math.min(pages-1,pp));
+      rows.forEach(function(r,i){r.style.display=(i>=cur*ps&&i<(cur+1)*ps)?'':'none';});draw();}
+    function draw(){var h='<button class="pgb" '+(cur===0?'disabled':'')+' data-p="'+(cur-1)+'">‹</button>';
+      for(var i=0;i<pages;i++)h+='<button class="pgb'+(i===cur?' on':'')+'" data-p="'+i+'">'+(i+1)+'</button>';
+      h+='<button class="pgb" '+(cur===pages-1?'disabled':'')+' data-p="'+(cur+1)+'">›</button>';
+      nav.innerHTML=h;
+      nav.querySelectorAll('.pgb').forEach(function(b){b.onclick=function(){show(parseInt(b.dataset.p,10));};});}
+    show(0);
+  });
+}
 function ringOf(x){
   var c=x.col==='exec'?'half':(x.col==='settled'?'full':(x.col==='batal'?'x':''));
   return '<span class="ring '+c+'"></span>';
@@ -775,7 +854,7 @@ kbF();agB();
 window.addEventListener('load',function(){agB();});
 </script>
   <div class="stleg">Status: <span class="stb st-plan" title="Terjadwal, belum eksekusi.">⏳ Plan</span> <span class="stb st-exec" title="Sudah eksekusi/done TAPI CA belum di-settle (nunggu settle). Normal.">▷ Belum Settle</span> <span class="stb st-settle" title="Sudah di-settle (CA DR cocok, atau TM: DR sudah serahkan report).">✓ Settle</span> <span class="stb st-blf" title="Struktur Fani — budget TERPISAH, bukan DR/CA.">✦ BLF</span></div>
-  <h2 class="sec">🗳️ Proposal Kegiatan <small class="muted">(6 nunggu ACC)</small> <small class="muted">(usul dari papan DR — ACC lewat Janus)</small></h2><div class="card lgcard"><div class="lgrow"><span class="lgb" style="background:#C98A001a;color:#C98A00">⧗ PENDING</span><span class="lgw">Darmanto · SM</span><span class="lgv">Kebonagung · 2026-08-12 · Kacang hijau</span></div><div class="lgrow"><span class="lgb" style="background:#C98A001a;color:#C98A00">⧗ PENDING</span><span class="lgw">Darmanto · FED</span><span class="lgv">Kebonagung / Klampok · Kacang hijau</span></div><div class="lgrow"><span class="lgb" style="background:#C98A001a;color:#C98A00">⧗ PENDING</span><span class="lgw">Heppy · SM</span><span class="lgv">Undaan / Ngoro · 2026-08-20 · Kacang hijau</span></div><div class="lgrow"><span class="lgb" style="background:#C98A001a;color:#C98A00">⧗ PENDING</span><span class="lgw">Denny · FED</span><span class="lgv">Godong / Pahesan · 2026-08-14 · Kacang hijaua</span></div><div class="lgrow"><span class="lgb" style="background:#C98A001a;color:#C98A00">⧗ PENDING</span><span class="lgw">Denny · FED</span><span class="lgv">Godong / Watununggal · 2026-08-16 · Kacang hijau</span></div><div class="lgrow"><span class="lgb" style="background:#C98A001a;color:#C98A00">⧗ PENDING</span><span class="lgw">Denny · FED</span><span class="lgv">Godong / Tungu · 2026-08-18 · Kacang hijau</span></div><div class="lgrow"><span class="lgb" style="background:#2E7D321a;color:#2E7D32">✓ APPROVED</span><span class="lgw">Heppy · SM</span><span class="lgv">Undaan / Undaan tengah · 2026-08-20 · Kacang hijau</span> <span class="muted">→ heppy-sm-q3-2026#1</span></div><div class="lgrow"><span class="lgb" style="background:#2E7D321a;color:#2E7D32">✓ APPROVED</span><span class="lgw">Heppy · SM</span><span class="lgv">Undaan / Undaan lor · 2026-08-20 · Kacang hijau</span> <span class="muted">→ heppy-sm-q3-2026#2</span></div></div>
+  <h2 class="sec">🗳️ Proposal Kegiatan <small class="muted">(6 nunggu ACC)</small> <small class="muted">(Terima/Tolak butuh PIN — atau lewat Janus)</small></h2><div class="card lgcard paged" data-ps="5"><div class="lgrow" data-pid="P-20260812-122003-af7d" data-dr="Darmanto" data-jenis="SM" data-desa="Kebonagung"><span class="lgb" style="background:#C98A001a;color:#C98A00">⧗ PENDING</span><span class="lgw">Darmanto · SM</span><span class="lgv">Kebonagung · 2026-08-12 · Kacang hijau</span><span class="propact"><button class="pbtn ok" onclick="propAsk(this,'approve')">✓ Terima</button><button class="pbtn no" onclick="propAsk(this,'reject')">✗ Tolak</button></span></div><div class="lgrow" data-pid="P-20260812-122003-1832" data-dr="Darmanto" data-jenis="FED" data-desa="Klampok"><span class="lgb" style="background:#C98A001a;color:#C98A00">⧗ PENDING</span><span class="lgw">Darmanto · FED</span><span class="lgv">Kebonagung / Klampok · Kacang hijau</span><span class="propact"><button class="pbtn ok" onclick="propAsk(this,'approve')">✓ Terima</button><button class="pbtn no" onclick="propAsk(this,'reject')">✗ Tolak</button></span></div><div class="lgrow" data-pid="P-20260812-123003-bf25" data-dr="Heppy" data-jenis="SM" data-desa="Ngoro"><span class="lgb" style="background:#C98A001a;color:#C98A00">⧗ PENDING</span><span class="lgw">Heppy · SM</span><span class="lgv">Undaan / Ngoro · 2026-08-20 · Kacang hijau</span><span class="propact"><button class="pbtn ok" onclick="propAsk(this,'approve')">✓ Terima</button><button class="pbtn no" onclick="propAsk(this,'reject')">✗ Tolak</button></span></div><div class="lgrow" data-pid="P-20260812-135003-4d92" data-dr="Denny" data-jenis="FED" data-desa="Pahesan"><span class="lgb" style="background:#C98A001a;color:#C98A00">⧗ PENDING</span><span class="lgw">Denny · FED</span><span class="lgv">Godong / Pahesan · 2026-08-14 · Kacang hijaua</span><span class="propact"><button class="pbtn ok" onclick="propAsk(this,'approve')">✓ Terima</button><button class="pbtn no" onclick="propAsk(this,'reject')">✗ Tolak</button></span></div><div class="lgrow" data-pid="P-20260812-141003-ab22" data-dr="Denny" data-jenis="FED" data-desa="Watununggal"><span class="lgb" style="background:#C98A001a;color:#C98A00">⧗ PENDING</span><span class="lgw">Denny · FED</span><span class="lgv">Godong / Watununggal · 2026-08-16 · Kacang hijau</span><span class="propact"><button class="pbtn ok" onclick="propAsk(this,'approve')">✓ Terima</button><button class="pbtn no" onclick="propAsk(this,'reject')">✗ Tolak</button></span></div><div class="lgrow" data-pid="P-20260813-005003-f36f" data-dr="Denny" data-jenis="FED" data-desa="Tungu"><span class="lgb" style="background:#C98A001a;color:#C98A00">⧗ PENDING</span><span class="lgw">Denny · FED</span><span class="lgv">Godong / Tungu · 2026-08-18 · Kacang hijau</span><span class="propact"><button class="pbtn ok" onclick="propAsk(this,'approve')">✓ Terima</button><button class="pbtn no" onclick="propAsk(this,'reject')">✗ Tolak</button></span></div><div class="lgrow"><span class="lgb" style="background:#2E7D321a;color:#2E7D32">✓ APPROVED</span><span class="lgw">Heppy · SM</span><span class="lgv">Undaan / Undaan tengah · 2026-08-20 · Kacang hijau</span> <span class="muted">→ heppy-sm-q3-2026#1</span></div><div class="lgrow"><span class="lgb" style="background:#2E7D321a;color:#2E7D32">✓ APPROVED</span><span class="lgw">Heppy · SM</span><span class="lgv">Undaan / Undaan lor · 2026-08-20 · Kacang hijau</span> <span class="muted">→ heppy-sm-q3-2026#2</span></div></div>
   <h2 class="sec">📋 Log Perubahan <small class="muted">(apa berubah &amp; kapan — dari papan DR)</small></h2>
   <div class="card lgcard paged" data-ps="5"><div class="lgrow"><span class="lgt">13 Agu 09:10</span><span class="lgb" style="background:#C628281a;color:#C62828">Batal</span><span class="lgw">Denny FED</span><span class="lgv">· Error sistem</span></div><div class="lgrow"><span class="lgt">13 Agu 06:10</span><span class="lgb" style="background:#0071BC1a;color:#0071BC">Reschedule</span><span class="lgw">Beni ODP</span><span class="lgv">13 Agu → 27 Agu</span></div><div class="lgrow"><span class="lgt">13 Agu 00:50</span><span class="lgb" style="background:#0071BC1a;color:#0071BC">Reschedule</span><span class="lgw">Triyuni FED</span><span class="lgv">19 Agu → 13 Agu</span></div><div class="lgrow"><span class="lgt">13 Agu 00:50</span><span class="lgb" style="background:#4A7A121a;color:#4A7A12">Plan baru</span><span class="lgw">Denny FED</span><span class="lgv">→ 18 Agu</span></div><div class="lgrow"><span class="lgt">12 Agu 14:10</span><span class="lgb" style="background:#4A7A121a;color:#4A7A12">Plan baru</span><span class="lgw">Denny FED</span><span class="lgv">→ 16 Agu</span></div><div class="lgrow"><span class="lgt">12 Agu 13:50</span><span class="lgb" style="background:#4A7A121a;color:#4A7A12">Plan baru</span><span class="lgw">Denny FED</span><span class="lgv">→ 14 Agu</span></div><div class="lgrow"><span class="lgt">12 Agu 12:30</span><span class="lgb" style="background:#4A7A121a;color:#4A7A12">Plan baru</span><span class="lgw">Heppy SM</span><span class="lgv">→ 20 Agu</span></div><div class="lgrow"><span class="lgt">12 Agu 12:20</span><span class="lgb" style="background:#4A7A121a;color:#4A7A12">Plan baru</span><span class="lgw">Darmanto FED</span><span class="lgv"></span></div><div class="lgrow"><span class="lgt">12 Agu 12:20</span><span class="lgb" style="background:#4A7A121a;color:#4A7A12">Plan baru</span><span class="lgw">Darmanto SM</span><span class="lgv">→ 12 Agu</span></div><div class="lgrow"><span class="lgt">12 Agu 09:20</span><span class="lgb" style="background:#0071BC1a;color:#0071BC">Reschedule</span><span class="lgw">Darmanto FED</span><span class="lgv">16 Sep → 16 Sep</span></div><div class="lgrow"><span class="lgt">12 Agu 08:50</span><span class="lgb" style="background:#0071BC1a;color:#0071BC">Reschedule</span><span class="lgw">— FED</span><span class="lgv">12 Agu → 26 Agu</span></div><div class="lgrow"><span class="lgt">12 Agu 06:30</span><span class="lgb" style="background:#4A7A121a;color:#4A7A12">Plan baru</span><span class="lgw">Heppy WORO-WORO</span><span class="lgv">→ 20 Agu</span></div><div class="lgrow"><span class="lgt">12 Agu 06:20</span><span class="lgb" style="background:#C628281a;color:#C62828">Batal</span><span class="lgw"></span><span class="lgv"></span></div><div class="lgrow"><span class="lgt">11 Agu 18:40</span><span class="lgb" style="background:#4A7A121a;color:#4A7A12">Plan baru</span><span class="lgw">Heppy WORO-WORO</span><span class="lgv">→ 20 Agu</span></div><div class="lgrow"><span class="lgt">11 Agu 18:40</span><span class="lgb" style="background:#C628281a;color:#C62828">Batal</span><span class="lgw">Heppy FED</span><span class="lgv">· Petani masih sibuk urus air dan tanam</span></div><div class="lgrow"><span class="lgt">11 Agu 08:10</span><span class="lgb" style="background:#0071BC1a;color:#0071BC">Reschedule</span><span class="lgw">Resa ODP</span><span class="lgv">11 Agu → 12 Agu</span></div><div class="lgrow"><span class="lgt">11 Agu 06:40</span><span class="lgb" style="background:#0071BC1a;color:#0071BC">Reschedule</span><span class="lgw">Triyuni FED</span><span class="lgv">11 Agu → 19 Agu</span></div><div class="lgrow"><span class="lgt">10 Agu 09:30</span><span class="lgb" style="background:#0071BC1a;color:#0071BC">Reschedule</span><span class="lgw"></span><span class="lgv"></span></div><div class="lgrow"><span class="lgt">10 Agu 09:12</span><span class="lgb" style="background:#0071BC1a;color:#0071BC">Reschedule</span><span class="lgw"></span><span class="lgv"></span></div><div class="lgrow"><span class="lgt">10 Agu 09:12</span><span class="lgb" style="background:#0071BC1a;color:#0071BC">Reschedule</span><span class="lgw">Heppy FED</span><span class="lgv">11 Agu → 13 Agu</span></div><div class="lgrow"><span class="lgt">10 Agu 09:12</span><span class="lgb" style="background:#C628281a;color:#C62828">Batal</span><span class="lgw">Fani FED</span><span class="lgv">· meeting area</span></div><div class="lgrow"><span class="lgt">10 Agu 09:12</span><span class="lgb" style="background:#0071BC1a;color:#0071BC">Reschedule</span><span class="lgw">Alvian FED</span><span class="lgv">10 Agu → 14 Agu</span></div><div class="lgrow"><span class="lgt">10 Agu 09:12</span><span class="lgb" style="background:#4A7A121a;color:#4A7A12">Plan baru</span><span class="lgw">Denny FED</span><span class="lgv"></span></div><div class="lgrow"><span class="lgt">9 Agu 20:20</span><span class="lgb" style="background:#0071BC1a;color:#0071BC">Reschedule</span><span class="lgw">Resa BC</span><span class="lgv">10 Sep → 26 Agu</span></div><div class="lgrow"><span class="lgt">6 Agu 09:30</span><span class="lgb" style="background:#C628281a;color:#C62828">Batal</span><span class="lgw">Denny SFED</span><span class="lgv">· Gairah petani di area kemloko kurang ant</span></div></div>
 </div>
@@ -1580,6 +1659,20 @@ applySchemeUI();loadKios();search.value=k.nama;
     <button class="shbtn ghost" onclick="shClose()">Tutup</button></div>
 </div>
 <div class="toast" id="toast"></div>
+<div class="pinm" id="pinModal" onclick="if(event.target===this)pinClose()">
+  <div class="pinbox">
+    <div class="pintitle" id="pinTitle">Masukin PIN</div>
+    <div class="pinsub">PIN persetujuan TM</div>
+    <div class="pdots" id="pinDots"></div>
+    <div class="pgrid">
+      <button class="pk" onclick="pinKey('1')">1</button><button class="pk" onclick="pinKey('2')">2</button><button class="pk" onclick="pinKey('3')">3</button>
+      <button class="pk" onclick="pinKey('4')">4</button><button class="pk" onclick="pinKey('5')">5</button><button class="pk" onclick="pinKey('6')">6</button>
+      <button class="pk" onclick="pinKey('7')">7</button><button class="pk" onclick="pinKey('8')">8</button><button class="pk" onclick="pinKey('9')">9</button>
+      <button class="pk act" onclick="pinDel()">⌫</button><button class="pk" onclick="pinKey('0')">0</button><button class="pk go" onclick="pinSubmit()">✓</button>
+    </div>
+    <button class="pincx" onclick="pinClose()">Batal</button>
+  </div>
+</div>
 
 <button class="fab" id="fab" onclick="shNew()" title="Ajukan kegiatan baru">＋</button>
 <footer>Janus DR Dashboard · update 2026-08-13 00:00 WIB · field jadwal/program saja (tanpa angka bisnis) · <b>Area: Demak Kudus · Grobogan · Kab Semarang saja</b> (isolasi — TM lain tak tercampur)</footer>
