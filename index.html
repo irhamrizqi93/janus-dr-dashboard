@@ -589,11 +589,14 @@ function actRef(r){r=r||'';var h=r.indexOf('#');if(h<1)return false;var n=r.slic
 function postAction(body,onOk,btn){
   if(btn){btn.disabled=true;btn.textContent='⏳ Mengirim...';}
   fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
-    .then(function(r){if(!r.ok)throw 0;return r.json();})
+    .then(function(r){if(!r.ok)throw 'bad';return r.json();})
     .then(function(){onOk();shClose();})
-    .catch(function(){
+    .catch(function(e){
       if(btn){btn.disabled=false;btn.textContent='📨 Kirim';}
-      toast('⚠️ Gagal terkirim — coba lagi.');
+      // 'bad' = server balas error (nyata). Selain itu = HP kehilangan balasan (mungkin SUDAH terkirim,
+      // aksi async diproses ROG) → JANGAN suruh spam ulang (bikin dobel).
+      if(e==='bad')toast('⚠️ Ditolak server — cek isian, coba lagi.');
+      else{shClose();toast('⚠️ Jaringan HP kurang stabil — kemungkinan SUDAH terkirim. Cek ±10 menit dulu, jangan tekan ulang.');}
     });
 }
 function sendUsul(){
@@ -719,14 +722,22 @@ function pinSubmit(){
   if(p.action==='reject')body.alasan='ditolak dari papan (Abang)';
   var okmsg=(p.action==='approve'?'✅ Diterima':'🗑️ Ditolak')+' — diproses ROG (±10 menit).';
   fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
-    .then(function(r){if(r.status===403)throw 'pin';if(!r.ok)throw 0;return r.json();})
+    .then(function(r){if(r.status===403)throw 'pin';if(!r.ok)throw 'bad';return r.json();})
     .then(function(){
       var row=p.row;pinClose();
       if(row){row.style.opacity='.55';row.onclick=null;row.style.cursor='default';
         var tx=row.querySelector('.tapx');if(tx){tx.textContent='⏳';tx.style.fontSize='14px';}}
       toast(okmsg);
     })
-    .catch(function(e){PINBUF='';renderDots();toast(e==='pin'?'❌ PIN salah — coba lagi.':'⚠️ Gagal terkirim — coba lagi.');});
+    .catch(function(e){
+      PINBUF='';renderDots();
+      // 'pin'=PIN salah (nyata). 'bad'=server tolak (nyata). Selain itu = HP kehilangan balasan Worker
+      // (mungkin SUDAH terkirim, diproses ROG) → tutup + jangan spam ulang (bikin dobel-reject/approve).
+      if(e==='pin')toast('❌ PIN salah — coba lagi.');
+      else if(e==='bad')toast('⚠️ Ditolak server — coba lagi.');
+      else{var row=p.row;pinClose();if(row){row.style.opacity='.7';}
+        toast('⚠️ Jaringan HP kurang stabil — kemungkinan SUDAH terkirim. Cek ±10 menit, JANGAN tekan ulang.');}
+    });
 }
 // ── Pagination generik: kartu .paged → tampil N baris/hal + nomor halaman ──
 function initPaged(){
