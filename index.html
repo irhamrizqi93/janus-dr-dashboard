@@ -206,18 +206,48 @@ border-bottom:1px solid var(--hair,rgba(16,56,79,.07));font-size:13px}
 .proprow:active{background:var(--rail,#F1F4F6)}
 .tapx{flex:0 0 auto;color:var(--ink-4,#93A5B1);font-size:20px;font-weight:400;margin-left:auto}
 .propbtns{display:flex;gap:10px;margin-top:16px}
-/* Demoplot M1 (Daftar per DR) — daftar berjalan + lampu status, soft & ramping */
-.dpm .dpm-dr{font-size:12px;font-weight:600;color:var(--navy);letter-spacing:.01em;margin:14px 2px 6px}
-.dpm-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--sh-card)}
-.dpm-row{display:flex;align-items:center;gap:11px;padding:11px 13px;border-bottom:1px solid var(--hair,rgba(16,56,79,.06))}
+/* Demoplot — grup per crop (collapse) + baris klik→detail, soft & ramping */
+.dpm-crop{margin-bottom:8px;border:1px solid var(--line);border-radius:10px;background:var(--surface);
+  overflow:hidden;box-shadow:var(--sh-card)}
+.dpm-crop>summary{list-style:none;cursor:pointer;padding:12px 14px;font-size:13.5px;font-weight:500;
+  color:var(--navy);display:flex;align-items:center}
+.dpm-crop>summary::-webkit-details-marker{display:none}
+.dpm-crop>summary::after{content:'▸';margin-left:auto;color:var(--ink-4);font-size:12px;transition:transform .15s}
+.dpm-crop[open]>summary::after{transform:rotate(90deg)}
+.dpm-crop[open]>summary{border-bottom:1px solid var(--hair,rgba(16,56,79,.07))}
+.dpm-n{margin-left:8px;font-size:11px;font-weight:600;color:var(--ink-3);background:var(--rail,#F1F4F6);
+  border-radius:99px;padding:1px 8px}
+.dpm-card{padding:0}
+.dpm-row{display:flex;align-items:center;gap:11px;padding:11px 14px;
+  border-bottom:1px solid var(--hair,rgba(16,56,79,.06));cursor:pointer}
 .dpm-row:last-child{border-bottom:0}
+.dpm-row:active{background:var(--rail,#F1F4F6)}
 .dpm-dot{width:9px;height:9px;border-radius:50%;flex:none}
-.dpm-main{flex:1;font-size:13.5px;font-weight:400;color:var(--navy)}
-.dpm-main b{font-weight:500}
+.dpm-main{flex:1;font-size:13.5px;font-weight:400;color:var(--navy);min-width:0}
+.dpm-main b{font-weight:600}
 .dpm-main small{display:block;color:var(--ink-3);font-size:11.5px;margin-top:1px}
 .dpm-meta{flex:none;font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
-.dpm-leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--ink-3);padding:11px 2px 2px}
+.dpm-chev{flex:none;color:var(--ink-4);font-size:17px;font-weight:300}
+.dpm-leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--ink-3);padding:10px 2px 2px}
 .dpm-leg i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
+/* detail modal */
+.dd-box{max-width:400px;text-align:left}
+.dd-crop{font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3)}
+.dd-t{font-size:20px;font-weight:300;letter-spacing:-.3px;color:var(--navy);margin:3px 0 2px}
+.dd-who{font-size:12.5px;color:var(--ink-2)}
+.dd-stat{display:inline-flex;align-items:center;gap:7px;margin-top:12px;padding:6px 11px;border-radius:8px;
+  font-size:12.5px;font-weight:500}
+.dd-hst{margin-top:14px;padding-top:13px;border-top:1px solid var(--hair,rgba(16,56,79,.07))}
+.dd-hst .big{font-size:26px;font-weight:300;letter-spacing:-.5px;color:var(--navy);font-variant-numeric:tabular-nums}
+.dd-hst small{font-size:12px;color:var(--ink-3)}
+.dd-sec{font-size:11.5px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);margin:18px 0 8px}
+.dd-app{border:1px solid var(--line);border-radius:10px;padding:12px 13px;margin-bottom:8px}
+.dd-ah{display:flex;align-items:center;gap:8px;font-size:14px}
+.dd-ah b{flex:1;font-weight:500;color:var(--navy)}
+.dd-w{font-size:11.5px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.dd-af{font-size:12.5px;color:var(--ink-2);margin-top:8px;padding-top:8px;border-top:1px solid var(--hair,rgba(16,56,79,.06))}
+.dd-af b{color:var(--navy);font-weight:500}
+.dd-flag{margin-top:10px;font-size:12px;color:#9A5B00;background:#FBEFCF;border-radius:8px;padding:9px 12px}
 .pbtn{flex:1;min-height:44px;border-radius:9px;border:1px solid var(--line);font-size:13.5px;
   font-weight:700;cursor:pointer;background:var(--surface)}
 .pbtn.ok{background:var(--green,#89D329);border-color:var(--green,#89D329);color:var(--navy)}
@@ -751,6 +781,29 @@ function pinSubmit(){
         toast('⚠️ Jaringan HP kurang stabil — kemungkinan SUDAH terkirim. Cek ±10 menit, JANGAN tekan ulang.');}
     });
 }
+// ── Demoplot: klik baris → halaman detail (modal) dari data embed ──
+function dpmDetail(id){
+  var d=(window.DEMO_DETAIL||{})[id];if(!d)return;
+  var L={g:'#5C9E6B',y:'#BE922E',r:'#BC5B55',grey:'#93A5B1',done:'#93A5B1'};
+  var BG={r:'#F6EAE8',y:'#F7F1E2',g:'#EEF4EF',grey:'#EEF1F3',done:'#EEF1F3'};
+  var lam=d.lampu||{};
+  var esc=function(s){return String(s==null?'':s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});};
+  var prod=(d.aplikasi||[]).map(function(a){return esc(a.produk);}).join(', ');
+  var h='<div class="dd-crop">Demoplot · '+esc(d.crop||'')+'</div><div class="dd-t">'+prod+'</div>'
+    +'<div class="dd-who">'+esc((d.dr||'')+(d.lokasi?' · '+d.lokasi:''))+'</div>'
+    +'<div class="dd-stat" style="background:'+(BG[lam.lampu]||'#EEF1F3')+';color:#4a5a50"><span class="dpm-dot" style="background:'+(L[lam.lampu]||'#93A5B1')+'"></span> '+esc(lam.txt||'')+'</div>'
+    +'<div class="dd-hst"><span class="big">'+(d.hst!=null?d.hst:'—')+'</span> <small>HST'+(d.tanggal_tanam?' · tanam '+esc(d.tanggal_tanam):' · tanggal tanam belum diisi (isi umur spray)')+'</small></div>'
+    +'<div class="dd-sec">Aplikasi &amp; pengamatan</div>';
+  (d.aplikasi||[]).forEach(function(a){
+    var amt=a.amati_hst!=null?(a.amati_hst+' HST'):'saat panen / window belum diset';
+    h+='<div class="dd-app"><div class="dd-ah"><b>'+esc(a.produk)+'</b>'+(a.spray?'<span class="dd-w">spray '+esc(a.spray)+'</span>':'<span class="dd-w">belum spray</span>')+'</div>'
+      +'<div class="dd-af">Amati <b>'+amt+'</b>'+(a.amati_apa?' — '+esc(a.amati_apa):'')+(a.done?' · <span style="color:#5C9E6B">✓ diamati</span>':'')+'</div></div>';
+  });
+  if((d.flags||[]).length)h+='<div class="dd-flag">⚠️ '+esc(d.flags.join(', '))+'</div>';
+  document.getElementById('dpmBody').innerHTML=h;
+  document.getElementById('dpmModal').classList.add('on');
+}
+function dpmClose(){document.getElementById('dpmModal').classList.remove('on');}
 // ── Pagination generik: kartu .paged → tampil N baris/hal + nomor halaman ──
 function initPaged(){
   document.querySelectorAll('.paged').forEach(function(c){
@@ -1698,6 +1751,9 @@ applySchemeUI();loadKios();search.value=k.nama;
     <button class="shbtn ghost" onclick="shClose()">Tutup</button></div>
 </div>
 <div class="toast" id="toast"></div>
+<div class="pinm" id="dpmModal" onclick="if(event.target===this)dpmClose()">
+  <div class="pinbox dd-box"><button class="pincx" style="text-align:left;color:var(--accent,#0071BC)" onclick="dpmClose()">‹ Tutup</button><div id="dpmBody"></div></div>
+</div>
 <div class="pinm" id="propModal" onclick="if(event.target===this)propClose()">
   <div class="pinbox">
     <div class="pintitle" id="propTitle"></div>
